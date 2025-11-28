@@ -83,7 +83,7 @@ docker-compose up -d
 |------|------|------|
 | **Vercel** | 推荐，速度快 | [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/tony-wang1990/laowang-nav) |
 | **Netlify** | 稳定，免费额度高 | [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/tony-wang1990/laowang-nav) |
-| **Zeabur** | 容器化部署 | [![Deploy on Zeabur](https://zeabur.com/button.svg)](https://zeabur.com/templates/Rb400W) |
+| **Zeabur** | 容器化部署 | [👉 点击部署](https://zeabur.com) (需在控制台导入仓库) |
 
 ### 💻 源代码部署
 
