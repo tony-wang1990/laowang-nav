@@ -1,0 +1,47 @@
+{
+    "common": {
+        "appName": "老王导航",
+        "search": "搜索",
+        "login": "登录",
+        "logout": "退出",
+        "edit": "编辑",
+        "save": "保存",
+        "cancel": "取消",
+        "delete": "删除",
+        "add": "添加",
+        "settings": "设置",
+        "theme": "主题",
+        "language": "语言"
+    },
+    "header": {
+        "searchPlaceholder": "搜索应用...",
+        "weather": "天气",
+        "time": "时间",
+        "date": "日期"
+    },
+    "sidebar": {
+        "categories": "分类"
+    },
+    "themes": {
+        "cyberpunk": "赛博朋克",
+        "dark": "深夜黑",
+        "matrix": "黑客帝国",
+        "sunset": "日落橙",
+        "ocean": "深海蓝",
+        "forest": "森林绿",
+        "rose": "玫瑰粉",
+        "gold": "土豪金",
+        "purple": "紫罗兰"
+    },
+    "searchEngines": {
+        "baidu": "百度",
+        "google": "谷歌",
+        "bing": "必应",
+        "github": "GitHub"
+    },
+    "footer": {
+        "license": "许可证",
+        "author": "作者",
+        "support": "获取支持"
+    }
+}

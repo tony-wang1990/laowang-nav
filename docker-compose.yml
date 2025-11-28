@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    image: nav-item:latest
+    container_name: nav-item
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    volumes:
+      # Optional: Mount custom config file
+      # - ./public/conf.yml:/usr/share/nginx/html/conf.yml
+    environment:
+      - NODE_ENV=production

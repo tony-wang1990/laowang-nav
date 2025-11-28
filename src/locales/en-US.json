@@ -1,0 +1,47 @@
+{
+    "common": {
+        "appName": "Laowang Nav",
+        "search": "Search",
+        "login": "Log In",
+        "logout": "Log Out",
+        "edit": "Edit",
+        "save": "Save",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "add": "Add",
+        "settings": "Settings",
+        "theme": "Theme",
+        "language": "Language"
+    },
+    "header": {
+        "searchPlaceholder": "Search apps...",
+        "weather": "Weather",
+        "time": "Time",
+        "date": "Date"
+    },
+    "sidebar": {
+        "categories": "Categories"
+    },
+    "themes": {
+        "cyberpunk": "Cyberpunk",
+        "dark": "Dark",
+        "matrix": "Matrix",
+        "sunset": "Sunset",
+        "ocean": "Ocean",
+        "forest": "Forest",
+        "rose": "Rose",
+        "gold": "Gold",
+        "purple": "Purple"
+    },
+    "searchEngines": {
+        "baidu": "Baidu",
+        "google": "Google",
+        "bing": "Bing",
+        "github": "GitHub"
+    },
+    "footer": {
+        "license": "License",
+        "author": "Author",
+        "support": "Get Support"
+    }
+}
