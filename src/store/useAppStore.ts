@@ -47,13 +47,11 @@ interface AppState {
     setLanguage: (lang: string) => void;
 }
 
-// SHA-256 hash helper (简化版，实际应用中应使用crypto库)
+// SHA-256 hash helper (Using js-sha256 for HTTP compatibility)
+import { sha256 } from '../utils/sha256';
+
 export const hashPassword = async (password: string): Promise<string> => {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(password);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
+    return sha256(password).toUpperCase();
 };
 
 export const useAppStore = create<AppState>()(
