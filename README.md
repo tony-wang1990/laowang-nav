@@ -7,6 +7,12 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6.svg)
 ![Vite](https://img.shields.io/badge/Vite-5.x-646CFF.svg)
 
+## 🚀 在线演示 (Live Demo)
+
+🎉 点击下方链接，立即体验通过 Zeabur 部署的演示站点：
+
+[**👉 访问 Nav-Item Demo 网站**](https://demo-nav.zeabur.app)
+
 ## 🛠️ 技术栈
 
 **React + TypeScript + Vite + Tailwind CSS** (纯前端架构)
