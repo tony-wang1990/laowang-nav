@@ -15,8 +15,13 @@ import './i18n';
 
 function App() {
     const { loadConfig, config } = useConfigStore();
-    const { theme, applyTheme } = useThemeStore();
-    const { currentView, isAuthenticated } = useAppStore();
+    const { background } = useThemeStore();
+    const {
+        currentView,
+        isAuthenticated,
+        showToolbar,
+        setShowToolbar
+    } = useAppStore();
 
     const [showLogin, setShowLogin] = useState(false);
     const [showSettings, setShowSettings] = useState(false);
@@ -29,11 +34,6 @@ function App() {
         loadConfig();
     }, [loadConfig]);
 
-    // Apply theme
-    useEffect(() => {
-        applyTheme(theme);
-    }, [theme, applyTheme]);
-
     // Render view based on currentView
     const renderView = () => {
         switch (currentView) {
@@ -43,29 +43,17 @@ function App() {
                 return <WorkspaceView />;
             case 'default':
             default:
-                return (
-                    <>
-                        <TopNav />
-                        <Header
-                            onLoginClick={() => setShowLogin(true)}
-                            onOpenSettings={() => setShowSettings(true)}
-                        />
-                        <DefaultView />
-                        <Footer />
-                    </>
-                );
+                return <DefaultView />;
         }
     };
 
     return (
-        <div className="min-h-screen flex flex-col bg-[#0a0a0f] relative overflow-x-hidden">
+        <div className="min-h-screen flex flex-col relative overflow-x-hidden">
             {/* Animated Background (only for default view) */}
             {currentView === 'default' && (
-                <div className={`fixed inset-0 z-0 ${config?.appConfig?.background || ''}`}>
+                <div className={`fixed inset-0 z-0 bg-${background} transition-all duration-500`}>
                     {!config?.appConfig?.background && (
                         <>
-                            <div className="absolute inset-0 bg-gradient-to-br from-[#0a0a0f] via-[#1a1a2e] to-[#16213e]" />
-
                             {/* Animated Stars */}
                             <div className="stars-container absolute inset-0">
                                 {[...Array(100)].map((_, i) => (
@@ -97,8 +85,20 @@ function App() {
             )}
 
             {/* Main Content */}
-            <div className="relative z-10 flex flex-col min-h-screen">
-                {renderView()}
+            <div className="relative z-10 flex-1 flex flex-col">
+                {currentView === 'default' && <TopNav />}
+                {currentView === 'default' && (
+                    <Header
+                        onLoginClick={() => setShowLogin(true)}
+                        onOpenSettings={() => setShowSettings(true)}
+                    />
+                )}
+                <main className="flex-1 container mx-auto px-4 py-8">
+                    {renderView()}
+                </main>
+
+                {/* Footer */}
+                {currentView === 'default' && <Footer />}
             </div>
 
             {/* Modals */}

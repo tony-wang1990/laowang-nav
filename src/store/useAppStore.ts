@@ -29,9 +29,16 @@ interface AppState {
         icon: string;
         city: string;
     } | null;
+    weatherLocation: string;
 
     // Language
     language: string;
+
+    // Customization
+    layout: 'grid' | 'list';
+    itemSize: 'small' | 'medium' | 'large';
+    showToolbar: boolean;
+    appTitle: string;
 
     // Actions
     setCurrentView: (view: 'default' | 'minimal' | 'workspace') => void;
@@ -44,12 +51,16 @@ interface AppState {
     login: (username: string, password: string) => Promise<boolean>;
     logout: () => void;
     setWeather: (weather: AppState['weather']) => void;
+    setWeatherLocation: (location: string) => void;
     setLanguage: (lang: string) => void;
+    setLayout: (layout: 'grid' | 'list') => void;
+    setItemSize: (size: 'small' | 'medium' | 'large') => void;
+    setShowToolbar: (show: boolean) => void;
+    setAppTitle: (title: string) => void;
 }
 
 // SHA-256 hash helper (Using js-sha256 for HTTP compatibility)
 import { sha256 } from '../utils/sha256';
-
 export const hashPassword = async (password: string): Promise<string> => {
     return sha256(password).toUpperCase();
 };
@@ -66,7 +77,12 @@ export const useAppStore = create<AppState>()(
             isAuthenticated: false,
             currentUser: null,
             weather: null,
+            weatherLocation: '',
             language: 'zh-CN',
+            layout: 'grid',
+            itemSize: 'medium',
+            showToolbar: true,
+            appTitle: '老王导航',
 
             setCurrentView: (view) => set({ currentView: view }),
 
@@ -104,7 +120,6 @@ export const useAppStore = create<AppState>()(
                 }
 
                 // Fallback for default admin if no users configured or explicit admin check
-                // Only if no users are configured in config to prevent backdoor if user changed admin password
                 if ((!config?.appConfig?.auth?.users || config.appConfig.auth.users.length === 0) && username === 'admin') {
                     if (inputHash === defaultAdminHash) {
                         const user: AuthUser = {
@@ -129,8 +144,14 @@ export const useAppStore = create<AppState>()(
             },
 
             setWeather: (weather) => set({ weather }),
+            setWeatherLocation: (location) => set({ weatherLocation: location }),
 
             setLanguage: (lang) => set({ language: lang }),
+
+            setLayout: (layout) => set({ layout }),
+            setItemSize: (size) => set({ itemSize: size }),
+            setShowToolbar: (show) => set({ showToolbar: show }),
+            setAppTitle: (title) => set({ appTitle: title }),
         }),
         {
             name: 'dashy-app-storage',
@@ -141,6 +162,11 @@ export const useAppStore = create<AppState>()(
                 isAuthenticated: state.isAuthenticated,
                 currentUser: state.currentUser,
                 language: state.language,
+                layout: state.layout,
+                itemSize: state.itemSize,
+                showToolbar: state.showToolbar,
+                weatherLocation: state.weatherLocation,
+                appTitle: state.appTitle,
             }),
         }
     )

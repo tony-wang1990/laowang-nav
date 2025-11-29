@@ -2,46 +2,47 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 interface ThemeState {
-    theme: string;
+    background: string;
     customCss: string;
 
     // Actions
-    setTheme: (theme: string) => void;
+    setBackground: (bg: string) => void;
     setCustomCss: (css: string) => void;
-    applyTheme: (theme: string) => void;
 }
 
-const themes = [
-    'cyberpunk',
-    'dark',
-    'matrix',
-    'sunset',
-    'ocean',
-    'forest',
-    'rose',
-    'gold',
-    'purple',
-    'dashy-original',
-    'material',
-    'nord',
+const backgrounds = [
+    { id: 'cloud-breeze', name: '云淡风轻' },
+    { id: 'blue-sea', name: '碧海蓝天' },
+    { id: 'ink-splash', name: '水墨丹青' },
+    { id: 'color-flow', name: '流光溢彩' },
+    { id: 'purple-haze', name: '紫气东来' },
+    { id: 'green-wild', name: '绿野仙踪' },
+    { id: 'spring-warm', name: '春日暖阳' },
+    { id: 'fairy-tale', name: '童话世界' },
+    { id: 'white-pure', name: '素雅简淡' },
+    { id: 'gold-jade', name: '金玉满堂' },
+    { id: 'snow-sunset', name: '暮雪千山' },
+    { id: 'ice-world', name: '冰雪奇缘' },
+    { id: 'star-river', name: '星河滚烫' },
+    { id: 'aurora-dream', name: '极光幻境' },
+    { id: 'neon-night', name: '霓虹闪烁' },
 ];
 
 export const useThemeStore = create<ThemeState>()(
     persist(
         (set) => ({
-            theme: 'cyberpunk',
+            background: 'cloud-breeze',
             customCss: '',
 
-            setTheme: (theme: string) => {
-                if (themes.includes(theme)) {
-                    set({ theme });
-                    document.documentElement.setAttribute('data-theme', theme);
+            setBackground: (bg: string) => {
+                const isValid = backgrounds.some(b => b.id === bg);
+                if (isValid) {
+                    set({ background: bg });
                 }
             },
 
             setCustomCss: (css: string) => {
                 set({ customCss: css });
-                // 应用自定义CSS
                 let styleElement = document.getElementById('custom-css');
                 if (!styleElement) {
                     styleElement = document.createElement('style');
@@ -50,13 +51,6 @@ export const useThemeStore = create<ThemeState>()(
                 }
                 styleElement.textContent = css;
             },
-
-            applyTheme: (theme: string) => {
-                if (themes.includes(theme)) {
-                    set({ theme });
-                    document.documentElement.setAttribute('data-theme', theme);
-                }
-            },
         }),
         {
             name: 'dashy-theme-storage',
@@ -64,5 +58,4 @@ export const useThemeStore = create<ThemeState>()(
     )
 );
 
-// 导出可用主题列表
-export { themes };
+export { backgrounds };

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { X, Settings as SettingsIcon, Palette, Download, Upload, Code, Cloud, Lock } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useConfigStore } from '../../store/useConfigStore';
-import { useThemeStore, themes } from '../../store/useThemeStore';
+import { useThemeStore, backgrounds } from '../../store/useThemeStore';
 import { useAppStore, hashPassword } from '../../store/useAppStore';
 import ConfigEditorModal from './ConfigEditorModal';
 import CloudBackupModal from './CloudBackupModal';
@@ -14,7 +14,7 @@ interface SettingsModalProps {
 export default function SettingsModal({ onClose }: SettingsModalProps) {
     const { t } = useTranslation();
     const { config, exportToFile, importFromFile, resetConfig, updateConfig } = useConfigStore();
-    const { theme, setTheme } = useThemeStore();
+    const { background, setBackground } = useThemeStore();
     const { logout } = useAppStore();
     const [showConfigEditor, setShowConfigEditor] = useState(false);
     const [showCloudBackup, setShowCloudBackup] = useState(false);
@@ -70,7 +70,7 @@ export default function SettingsModal({ onClose }: SettingsModalProps) {
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
                 <div className="glass rounded-2xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
                     {/* Header */}
-                    <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center justify-between mb-6 sticky top-0 bg-[#0f172a]/90 backdrop-blur-md z-10 py-2 -mx-2 px-2 border-b border-white/5">
                         <h2 className="text-2xl font-bold text-white flex items-center gap-2">
                             <SettingsIcon className="w-6 h-6" />
                             {t('common.settings')}
@@ -83,25 +83,22 @@ export default function SettingsModal({ onClose }: SettingsModalProps) {
                         </button>
                     </div>
 
-                    {/* Theme Section */}
+                    {/* General Section */}
                     <div className="mb-8">
                         <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                            <Palette className="w-5 h-5 text-primary" />
-                            主题
+                            <SettingsIcon className="w-5 h-5 text-gray-400" />
+                            通用设置
                         </h3>
-                        <div className="grid grid-cols-3 gap-3">
-                            {themes.map((t) => (
-                                <button
-                                    key={t}
-                                    onClick={() => setTheme(t)}
-                                    className={`p-4 rounded-lg transition-all border-2 ${theme === t
-                                        ? 'bg-primary/20 border-primary text-primary'
-                                        : 'glass border-white/10 hover:border-white/30'
-                                        }`}
-                                >
-                                    <div className="font-medium capitalize">{t}</div>
-                                </button>
-                            ))}
+                        <div className="glass p-4 rounded-lg">
+                            <label className="block text-sm font-medium text-gray-400 mb-1">天气位置 (城市名拼音或英文)</label>
+                            <input
+                                type="text"
+                                value={useAppStore.getState().weatherLocation}
+                                onChange={(e) => useAppStore.getState().setWeatherLocation(e.target.value)}
+                                placeholder="例如: Beijing, Shanghai"
+                                className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary/50"
+                            />
+                            <p className="text-xs text-gray-500 mt-1">留空则自动定位</p>
                         </div>
                     </div>
 
@@ -114,13 +111,12 @@ export default function SettingsModal({ onClose }: SettingsModalProps) {
                         <div className="grid grid-cols-2 gap-3">
                             {[
                                 { id: '', name: '默认 (纯色)' },
-                                { id: 'bg-gradient-animate', name: '流光渐变' },
-                                { id: 'bg-particles', name: '粒子星空' },
-                                { id: 'bg-grid', name: '赛博网格' },
+                                ...backgrounds
                             ].map((bg) => (
                                 <button
                                     key={bg.id}
                                     onClick={() => {
+                                        setBackground(bg.id);
                                         if (config) {
                                             updateConfig({
                                                 ...config,
@@ -131,12 +127,12 @@ export default function SettingsModal({ onClose }: SettingsModalProps) {
                                             });
                                         }
                                     }}
-                                    className={`p-3 rounded-lg transition-all border-2 ${config?.appConfig?.background === bg.id
+                                    className={`p-3 rounded-lg transition-all border-2 ${background === bg.id
                                         ? 'bg-secondary/20 border-secondary text-secondary'
                                         : 'glass border-white/10 hover:border-white/30'
                                         }`}
                                 >
-                                    <div className="font-medium">{bg.name}</div>
+                                    <div className="font-medium capitalize">{bg.name}</div>
                                 </button>
                             ))}
                         </div>

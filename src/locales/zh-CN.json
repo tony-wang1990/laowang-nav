@@ -11,16 +11,35 @@
         "add": "添加",
         "settings": "设置",
         "theme": "主题",
-        "language": "语言"
+        "language": "语言",
+        "layout": "布局",
+        "size": "尺寸",
+        "grid": "网格",
+        "list": "列表",
+        "small": "小",
+        "medium": "中",
+        "large": "大"
     },
     "header": {
-        "searchPlaceholder": "搜索应用...",
+        "searchPlaceholder": "输入关键词搜索...",
         "weather": "天气",
         "time": "时间",
         "date": "日期"
     },
     "sidebar": {
         "categories": "分类"
+    },
+    "categories": {
+        "Common": "常用推荐",
+        "Tools": "在线工具",
+        "Media": "影音娱乐",
+        "Development": "开发工具",
+        "Social": "社交媒体",
+        "Shopping": "网上购物",
+        "News": "新闻资讯",
+        "Others": "其他资源",
+        "Work": "办公协作",
+        "Design": "设计资源"
     },
     "themes": {
         "cyberpunk": "赛博朋克",

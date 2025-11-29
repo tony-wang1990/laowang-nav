@@ -11,16 +11,35 @@
         "add": "Add",
         "settings": "Settings",
         "theme": "Theme",
-        "language": "Language"
+        "language": "Language",
+        "layout": "Layout",
+        "size": "Size",
+        "grid": "Grid",
+        "list": "List",
+        "small": "Small",
+        "medium": "Medium",
+        "large": "Large"
     },
     "header": {
-        "searchPlaceholder": "Search apps...",
+        "searchPlaceholder": "Enter keywords to search...",
         "weather": "Weather",
         "time": "Time",
         "date": "Date"
     },
     "sidebar": {
         "categories": "Categories"
+    },
+    "categories": {
+        "Common": "Common",
+        "Tools": "Tools",
+        "Media": "Media",
+        "Development": "Development",
+        "Social": "Social",
+        "Shopping": "Shopping",
+        "News": "News",
+        "Others": "Others",
+        "Work": "Work",
+        "Design": "Design"
     },
     "themes": {
         "cyberpunk": "Cyberpunk",

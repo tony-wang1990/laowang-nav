@@ -3,6 +3,15 @@
 @tailwind utilities;
 
 :root {
+  /* RGB values for Tailwind (space separated) */
+  --color-primary: 59 130 246;
+  /* #3b82f6 */
+  --color-secondary: 139 92 246;
+  /* #8b5cf6 */
+  --color-accent: 244 63 94;
+  /* #f43f5e */
+
+  /* Legacy/Direct usage variables */
   --primary: #3b82f6;
   --secondary: #8b5cf6;
   --background: #0f172a;
@@ -10,136 +19,8 @@
   --text: #f8fafc;
 }
 
-/* Theme Variables */
-[data-theme='cyberpunk'] {
-  --primary: #f0db4f;
-  --secondary: #ff003c;
-  --background: #000b1e;
-  --surface: #051628;
-}
-
-[data-theme='dark'] {
-  --primary: #3b82f6;
-  --secondary: #6366f1;
-  --background: #0f172a;
-  --surface: #1e293b;
-}
-
-[data-theme='matrix'] {
-  --primary: #00ff41;
-  --secondary: #008f11;
-  --background: #0d0208;
-  --surface: #003b00;
-}
-
-[data-theme='sunset'] {
-  --primary: #ff7e5f;
-  --secondary: #feb47b;
-  --background: #2d1b2e;
-  --surface: #4a2c40;
-}
-
-[data-theme='ocean'] {
-  --primary: #00d2ff;
-  --secondary: #3a7bd5;
-  --background: #001f3f;
-  --surface: #003366;
-}
-
-[data-theme='forest'] {
-  --primary: #56ab2f;
-  --secondary: #a8e063;
-  --background: #1a2f1a;
-  --surface: #2d4a2d;
-}
-
-[data-theme='rose'] {
-  --primary: #ff6b6b;
-  --secondary: #f06595;
-  --background: #2e1a22;
-  --surface: #4a2633;
-}
-
-[data-theme='gold'] {
-  --primary: #ffd700;
-  --secondary: #ffa500;
-  --background: #1c1c1c;
-  --surface: #333333;
-}
-
-[data-theme='purple'] {
-  --primary: #d500f9;
-  --secondary: #651fff;
-  --background: #12002b;
-  --surface: #240046;
-}
-
-body {
-  background-color: var(--background);
-  color: var(--text);
-  transition: background-color 0.3s ease, color 0.3s ease;
-  overflow-x: hidden;
-}
-
-/* Glassmorphism */
-.glass {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.glass-hover:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
-}
-
-/* Animations */
-@keyframes float {
-  0% {
-    transform: translateY(0px);
-  }
-
-  50% {
-    transform: translateY(-10px);
-  }
-
-  100% {
-    transform: translateY(0px);
-  }
-}
-
-.animate-float {
-  animation: float 6s ease-in-out infinite;
-}
-
 /* Dynamic Backgrounds */
-.bg-gradient-animate {
-  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-  background-size: 400% 400%;
-  animation: gradient 15s ease infinite;
-}
-
-@keyframes gradient {
+@keyframes gradient-flow {
   0% {
     background-position: 0% 50%;
   }
@@ -153,18 +34,120 @@ body {
   }
 }
 
-.bg-particles {
-  background-color: #000000;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25' viewBox='0 0 800 400'%3E%3Cdefs%3E%3CradialGradient id='a' cx='396' cy='281' r='514' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0' stop-color='%23D18'/%3E%3Cstop offset='1' stop-color='%23330000'/%3E%3C/radialGradient%3E%3ClinearGradient id='b' gradientUnits='userSpaceOnUse' x1='400' y1='148' x2='400' y2='333'%3E%3Cstop offset='0' stop-color='%23FA3' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%23FA3' stop-opacity='0.5'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect fill='url(%23a)' width='800' height='400'/%3E%3Cg fill-opacity='0.4'%3E%3Ccircle fill='url(%23b)' cx='267.5' cy='61' r='26'/%3E%3Ccircle fill='url(%23b)' cx='532.5' cy='61' r='26'/%3E%3Ccircle fill='url(%23b)' cx='400' cy='30' r='17'/%3E%3Ccircle fill='url(%23b)' cx='53.3' cy='89.6' r='22'/%3E%3Ccircle fill='url(%23b)' cx='267.5' cy='374' r='22'/%3E%3Ccircle fill='url(%23b)' cx='532.5' cy='374' r='22'/%3E%3Ccircle fill='url(%23b)' cx='400' cy='405' r='14'/%3E%3Ccircle fill='url(%23b)' cx='53.3' cy='345.4' r='18'/%3E%3Ccircle fill='url(%23b)' cx='746.7' cy='89.6' r='22'/%3E%3Ccircle fill='url(%23b)' cx='746.7' cy='345.4' r='18'/%3E%3C/g%3E%3C/svg%3E");
-  background-attachment: fixed;
-  background-size: cover;
+@keyframes float-clouds {
+  0% {
+    background-position: 0% 0%;
+  }
+
+  100% {
+    background-position: 100% 100%;
+  }
 }
 
-.bg-grid {
-  background-color: #111;
-  background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-  background-size: 30px 30px;
+/* 1. 云淡风轻 */
+.bg-cloud-breeze {
+  background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+  background-size: 200% 200%;
+  animation: gradient-flow 15s ease infinite;
+}
+
+/* 2. 碧海蓝天 */
+.bg-blue-sea {
+  background: linear-gradient(to top, #00c6fb 0%, #005bea 100%);
+  background-size: 200% 200%;
+  animation: gradient-flow 15s ease infinite;
+}
+
+/* 3. 水墨丹青 */
+.bg-ink-splash {
+  background: linear-gradient(to bottom, #d7d2cc 0%, #304352 100%);
+  background-size: 200% 200%;
+  animation: gradient-flow 20s ease infinite;
+}
+
+/* 4. 流光溢彩 */
+.bg-color-flow {
+  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+  background-size: 400% 400%;
+  animation: gradient-flow 15s ease infinite;
+}
+
+/* 5. 紫气东来 */
+.bg-purple-haze {
+  background: linear-gradient(to right, #667eea 0%, #764ba2 100%);
+  background-size: 200% 200%;
+  animation: gradient-flow 15s ease infinite;
+}
+
+/* 6. 绿野仙踪 */
+.bg-green-wild {
+  background: linear-gradient(120deg, #d4fc79 0%, #96e6a1 100%);
+  background-size: 200% 200%;
+  animation: gradient-flow 15s ease infinite;
+}
+
+/* 7. 春日暖阳 */
+.bg-spring-warm {
+  background: linear-gradient(to top, #fddb92 0%, #d1fdff 100%);
+  background-size: 200% 200%;
+  animation: gradient-flow 15s ease infinite;
+}
+
+/* 8. 童话世界 */
+.bg-fairy-tale {
+  background: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%);
+  background-size: 200% 200%;
+  animation: gradient-flow 15s ease infinite;
+}
+
+/* 9. 素雅简淡 */
+.bg-white-pure {
+  background: linear-gradient(to top, #e6e9f0 0%, #eef1f5 100%);
+  background-size: 200% 200%;
+  animation: gradient-flow 15s ease infinite;
+}
+
+/* 10. 金玉满堂 */
+.bg-gold-jade {
+  background: linear-gradient(to right, #f83600 0%, #f9d423 100%);
+  background-size: 200% 200%;
+  animation: gradient-flow 15s ease infinite;
+}
+
+/* 11. 暮雪千山 */
+.bg-snow-sunset {
+  background: linear-gradient(to top, #3b41c5 0%, #a981bb 49%, #ffc8a9 100%);
+  background-size: 200% 200%;
+  animation: gradient-flow 20s ease infinite;
+}
+
+/* 12. 冰雪奇缘 */
+.bg-ice-world {
+  background: linear-gradient(to top, #e6e9f0 0%, #eef1f5 100%);
+  background: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%);
+  background-size: 200% 200%;
+  animation: gradient-flow 15s ease infinite;
+}
+
+/* 13. 星河滚烫 */
+.bg-star-river {
+  background: linear-gradient(to right, #434343 0%, black 100%);
+  background-size: 200% 200%;
+  animation: gradient-flow 15s ease infinite;
+}
+
+/* 14. 极光幻境 */
+.bg-aurora-dream {
+  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+  background-size: 200% 200%;
+  animation: gradient-flow 15s ease infinite;
+}
+
+/* 15. 霓虹闪烁 */
+.bg-neon-night {
+  background: linear-gradient(to right, #000000, #434343);
+  background-size: 200% 200%;
+  animation: gradient-flow 15s ease infinite;
 }
 
 /* Center Align Cards */
