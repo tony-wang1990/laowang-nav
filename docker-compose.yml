@@ -8,7 +8,7 @@ services:
     restart: unless-stopped
     ports:
       - "3000:80"
-    volumes:
+    # volumes:
       # Optional: Mount custom config file
       # - ./public/conf.yml:/usr/share/nginx/html/conf.yml
     environment:
