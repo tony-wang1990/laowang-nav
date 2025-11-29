@@ -2,7 +2,7 @@
 
 pageInfo:
   title: 老王导航
-  description: 个人导航站 - 基于Dashy设计
+  description: 个人导航站
   navLinks:
     - title: GitHub仓库
       path: https://github.com/tony-wang1990/laowang-nav
