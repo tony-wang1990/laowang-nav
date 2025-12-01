@@ -1,9 +1,5 @@
 # LaoWang Nav
 
-<div align="center">
-
-<img src="https://raw.githubusercontent.com/tony-wang1990/laowang-nav/master/public/web-icons/logo-192.png" width="128" alt="LaoWang Nav Logo" />
-
 **一个漂亮、易用、功能强大的自托管导航页**
 
 [![License](https://img.shields.io/badge/License-MIT-blue)](https://github.com/tony-wang1990/laowang-nav/blob/master/LICENSE)
