@@ -14,13 +14,9 @@
 
 通过单一页面访问所有自托管服务和常用网站，让您的数字生活井井有条
 
-<p align="center">
-  <a href="https://zeabur.com/templates/2Q624P">
-    <img src="https://zeabur.com/button.svg" alt="Deploy on Zeabur"/>
-  </a>
-</p>
+Demo 演示站
 
-</div>
+https://demo-nav.zeabur.app/
 
 ---
 
