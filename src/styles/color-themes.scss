@@ -321,12 +321,12 @@ html[data-theme='fallout'] {
   /* Add line to bottom of settings row */
   section.settings-outer {
     .options-container {
-      border-top: var(--accent-line-width, 1px) solid var(--secondary);
+      border-top: none;
     }
 
     form.normal {
-      border-bottom: var(--accent-line-width, 1px) solid var(--secondary);
-      border-right: var(--accent-line-width, 1px) solid var(--secondary);
+      border-bottom: none;
+      border-right: none;
       margin-top: 0.5rem;
     }
   }
@@ -336,7 +336,7 @@ html[data-theme='fallout'] {
     border-radius: 1px;
 
     &:not(:last-child) {
-      border-bottom: var(--accent-line-width, 1px) solid var(--secondary);
+      border-bottom: none;
     }
   }
 
@@ -344,12 +344,12 @@ html[data-theme='fallout'] {
     border-radius: 1px;
 
     &:not(:last-child) {
-      border-right: var(--accent-line-width, 1px) solid var(--secondary);
+      border-right: none;
     }
   }
 
   .orientation-auto .collapsable .collapsible-content {
-    border-top: var(--accent-line-width, 1px) solid var(--secondary);
+    border-top: none;
   }
 }
 

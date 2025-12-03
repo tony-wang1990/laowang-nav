@@ -139,14 +139,14 @@ export default {
     display: flex;
     align-items: center;
     align-items: stretch;
-    background: linear-gradient(0deg, var(--background) 0%, var(--background-darker) 100%);
-    box-shadow: var(--settings-container-shadow);
+    background: transparent; /* Fix inconsistent background */
+    box-shadow: none;
   }
   .options-outer {
     display: flex;
     position: relative;
     flex: 1;
-    background: var(--settings-background);
+    background: transparent;
     border-radius: var(--curve-factor-navbar);
   }
   .options-container {
@@ -157,7 +157,7 @@ export default {
     flex: 1;
     padding: 1rem 1.5rem 1rem 1rem;
     border-radius: var(--curve-factor-navbar) 0 0;
-    background: var(--settings-background);
+    background: transparent;
     min-height: 60px;
     div {
       margin-left: 0.5rem;
@@ -193,7 +193,8 @@ export default {
       top: 0.5rem;
       right: 0.5rem;
       @include phone {
-        top: -3rem !important;
+        top: 0.5rem !important; /* Make visible on mobile */
+        right: 0.5rem !important;
       }
     }
     button {
@@ -226,8 +227,15 @@ export default {
   }
 
   @include phone {
-    .options-container, .show-hide-button {
-      // display: none;
+    .options-container {
+      /* Ensure options are hidden when collapsed on mobile */
+      &.hide {
+        display: none;
+      }
+    }
+    .show-hide-container {
+      /* Ensure button is visible */
+      display: flex !important;
     }
   }
 

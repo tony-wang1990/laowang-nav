@@ -118,9 +118,9 @@ export default {
     border: 1px solid rgba(255, 255, 255, 0.15);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     border-radius: var(--curve-factor);
-    padding: 0.8rem 1.2rem;
+    padding: 0.4rem 1rem; /* Reduced padding */
     transition: all 0.3s ease;
-    min-height: 48px;
+    min-height: 32px; /* Reduced min-height */
 
     &:focus-within {
       background: rgba(255, 255, 255, 0.15);
@@ -134,7 +134,7 @@ export default {
       border: none;
       outline: none;
       color: var(--settings-text-color);
-      font-size: 1.1rem;
+      font-size: 1rem; /* Slightly reduced font size */
 
       &::placeholder {
         color: var(--settings-text-color);
@@ -147,7 +147,7 @@ export default {
       border: none;
       color: var(--settings-text-color);
       cursor: pointer;
-      padding: 0.5rem;
+      padding: 0.2rem; /* Reduced padding */
       display: flex;
       align-items: center;
       opacity: 0.7;
@@ -175,11 +175,12 @@ export default {
     }
 
     .search-input-container {
-      padding: 0.9rem 1.2rem;
-      min-height: 48px;
+      padding: 0.4rem 1rem; /* Consistent reduced padding on mobile */
+      min-height: 32px;
+      /* display: none;  Restored as per user request */
 
       .search-input {
-        font-size: 1rem;
+        font-size: 0.95rem;
       }
     }
   }

@@ -1,8 +1,13 @@
 <template>
   <div class="header-info">
     <div class="info-item date-info">
-      <span class="date">{{ currentDate }}</span>
-      <span class="weekday">{{ currentWeekday }}</span>
+      <div class="date-row">
+        <span class="date">{{ currentDate }}</span>
+        <span class="weekday">{{ currentWeekday }}</span>
+      </div>
+      <div class="location-row" v-if="weather.location">
+        <span class="location-name">{{ weather.location }}</span>
+      </div>
     </div>
     <div class="divider"></div>
     <div class="info-item weather-info">
@@ -98,6 +103,7 @@ export default {
       weather: {
         temp: '--',
         condition: '加载中...',
+        location: '',
       },
     };
   },
@@ -124,6 +130,14 @@ export default {
         const current = data.current_condition[0];
         this.weather.temp = current.temp_C;
         this.weather.condition = this.translateWeather(current.weatherDesc[0].value);
+
+        // Extract location (City name)
+        if (data.nearest_area && data.nearest_area[0]) {
+          const area = data.nearest_area[0];
+          // Try to get city name from areaName or region
+          // User requested "XX County" or region
+          this.weather.location = area.areaName[0].value || area.region[0].value;
+        }
       } catch (error) {
         console.error('Failed to fetch weather:', error);
         this.weather.condition = '晴';
@@ -184,12 +198,24 @@ export default {
         line-height: 1.3;
       }
 
+      .date-row {
+        display: flex;
+        align-items: baseline;
+        gap: 0.5rem;
+      }
+
+      .location-row {
+        display: flex;
+        /* Align location to start to match date */
+        justify-content: flex-start;
+      }
+
       .date, .temp {
         font-size: 1.3rem;
         font-weight: 600;
       }
 
-      .weekday, .condition {
+      .weekday, .condition, .location-name {
         font-size: 0.95rem;
         font-weight: 500;
       }
@@ -207,14 +233,14 @@ export default {
       min-height: 60px;
 
       .info-item {
-        /* Keep column layout for tablets as per original design */
-        flex-direction: column; 
+        /* Keep column layout for tablets */
+        flex-direction: column;
         gap: 0.2rem;
 
         .date, .temp {
           font-size: 1.1rem;
         }
-        .weekday, .condition {
+        .weekday, .condition, .location-name {
           font-size: 0.85rem;
         }
       }
@@ -229,23 +255,37 @@ export default {
       padding: 0.5rem 1rem;
       gap: 0.5rem;
       min-height: auto;
-      width: 100%;
+      /* width: 100%;  Removed to allow flow with GitHub link */
       justify-content: center;
 
       .info-item {
         flex-direction: row;
         align-items: baseline;
         gap: 0.3rem;
+        
+        /* On mobile, maybe hide location or put it inline? 
+           User didn't specify mobile behavior for location, but usually space is tight.
+           I'll try to keep it if possible, or hide it.
+           Let's keep it but maybe smaller.
+        */
+        
+        .date-row {
+            gap: 0.3rem;
+        }
+        
+        .location-row {
+            display: none; /* Hide location on very small screens to avoid clutter? Or keep it? */
+        }
 
         .date, .temp {
           font-size: 1rem;
         }
-        
+
         /* Hide weekday on mobile to save space for single line */
         .weekday {
             display: none;
         }
-        
+
         .condition {
           font-size: 0.9rem;
         }

@@ -172,7 +172,7 @@ export default {
     align-items: center;
     border-radius: 0 0 var(--curve-factor-navbar) 0;
     padding: 0 0.2rem 0.2rem 0;
-    background: var(--search-container-background);
+    background: transparent; /* Fix inconsistent background */
     .search-wrap {
       display: flex;
       flex-direction: column;
@@ -192,15 +192,23 @@ export default {
       padding: 0.75rem;
       margin: 0.5rem;
       outline: none;
-      border: none;
       border-radius: var(--curve-factor);
-      background: var(--search-field-background);
+      
+      /* Match SearchEngineSelector style */
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       color: var(--settings-text-color);
-      border: 1px solid var(--outline-color);
       font-size: 0.95rem;
+      transition: all 0.3s ease;
+
       &:focus {
-        border-color: var(--settings-text-color);
-        opacity: var(--dimming-factor);
+        background: rgba(255, 255, 255, 0.15);
+        border-color: var(--primary);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        opacity: 1;
       }
     }
     .clear-search {
@@ -358,9 +366,9 @@ export default {
       display: none !important;
     }
 
-    /* Show mobile layout */
+    /* Show mobile layout - HIDDEN as per user request */
     .mobile-search-layout {
-      display: flex;
+      display: none !important;
     }
   }
 

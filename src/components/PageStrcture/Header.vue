@@ -3,7 +3,8 @@
       <div class="logo-container">
         <div class="title-glass-wrapper">
           <div class="logo-wrapper">
-            <img src="@/assets/logo-new.png" alt="LaoWang Nav" class="img-logo" />
+            <TransparentLogo :src="require('@/assets/logo-icon.png')" :tolerance="80" class="img-logo" />
+            <span class="logo-text">LaoWang Nav</span>
             <sup class="trademark">®</sup>
           </div>
         </div>
@@ -11,6 +12,10 @@
       <!-- PageTitle removed to prevent duplicate text -->
       <div class="header-right">
         <HeaderInfo class="header-weather" />
+        <!-- Custom GitHub Link -->
+        <a href="https://github.com/tony-wang1990/laowang-nav" target="_blank" class="github-text-link">
+          GitHub
+        </a>
         <Nav v-if="navVisible" :links="hardcodedLinks" class="nav" />
       </div>
     </header>
@@ -20,6 +25,7 @@
 import PageTitle from '@/components/PageStrcture/PageTitle.vue';
 import HeaderInfo from '@/components/PageStrcture/HeaderInfo.vue';
 import Nav from '@/components/PageStrcture/Nav.vue';
+import TransparentLogo from '@/components/PageStrcture/TransparentLogo.vue';
 import { shouldBeVisible } from '@/utils/SectionHelpers';
 
 export default {
@@ -28,19 +34,15 @@ export default {
     PageTitle,
     HeaderInfo,
     Nav,
+    TransparentLogo,
   },
   props: {
     pageInfo: Object,
   },
   data() {
     return {
-      // 硬编码的链接，无法通过配置修改
-      hardcodedLinks: [
-        {
-          title: 'GitHub',
-          path: 'https://github.com/tony-wang1990/laowang-nav',
-        },
-      ],
+      // Empty hardcoded links as GitHub is now separate
+      hardcodedLinks: [],
     };
   },
   computed: {
@@ -69,7 +71,7 @@ export default {
     padding: 0.5rem;
     display: flex;
     justify-content: space-between;
-    background: var(--background-darker);
+    background: transparent; /* Fix theme inconsistency */
     align-items: center;
     align-content: flex-start;
     @include phone {
@@ -96,9 +98,38 @@ export default {
 
     @include phone {
       width: 100%;
-      flex-direction: column;
-      gap: 0.2rem;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 0.5rem;
       justify-content: center;
+      align-items: center;
+    }
+  }
+  
+  .github-text-link {
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-decoration: none;
+    
+    /* Rainbow Gradient */
+    background: linear-gradient(90deg,
+      #ff0000 0%,
+      #ff7f00 14%,
+      #ffff00 28%,
+      #00ff00 42%,
+      #00ffff 57%,
+      #0000ff 71%,
+      #8b00ff 85%,
+      #ff0000 100%
+    );
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: rainbowFlow 10s linear infinite;
+    
+    &:hover {
+      opacity: 0.8;
     }
   }
 
@@ -122,27 +153,61 @@ export default {
     position: relative;
     display: inline-flex;
     align-items: center;
+    gap: 0.8rem; /* Space between icon and text */
+    text-decoration: none;
   }
 
   .img-logo {
-    height: 3.5rem; /* Adjust height as needed for desktop */
-    width: auto;
+    height: 2.5rem;
+    width: 2.5rem;
     display: block;
+    border-radius: 50%; /* Circular icon */
+    object-fit: cover;
+    /* mix-blend-mode removed, handled by component */
     
     @include phone {
-      height: 2.8rem; /* Smaller on mobile */
+      height: 2rem;
+      width: 2rem;
+    }
+  }
+
+  .logo-text {
+    font-size: 1.5rem;
+    font-weight: 700;
+    white-space: nowrap;
+    letter-spacing: 0.5px;
+    
+    /* Rainbow Gradient */
+    background: linear-gradient(90deg,
+      #ff0000 0%,
+      #ff7f00 14%,
+      #ffff00 28%,
+      #00ff00 42%,
+      #00ffff 57%,
+      #0000ff 71%,
+      #8b00ff 85%,
+      #ff0000 100%
+    );
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: rainbowFlow 10s linear infinite;
+    
+    @include phone {
+      font-size: 1.2rem;
     }
   }
 
   .trademark {
     position: absolute;
-    top: -0.2rem;
+    top: -0.3rem;
     right: -0.8rem;
-    font-size: 1rem;
+    font-size: 0.8rem;
     font-weight: 700;
-    color: #fff; /* Make sure it's visible */
+    color: #fff;
     opacity: 0.9;
-    
+
     /* Optional: keep the rainbow effect for the R symbol if desired, or just white */
     background: linear-gradient(90deg,
       #ff0000 0%,

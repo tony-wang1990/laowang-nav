@@ -197,7 +197,7 @@ export default {
 
 .home {
   padding-bottom: 1px;
-  background: var(--background);
+  background: transparent; /* Fix background alignment issues */
   min-height: calc(99.9vh - var(--footer-height));
 }
 
@@ -313,7 +313,11 @@ export default {
 /* Web search engine selector container */
 .web-search-container {
   margin: 1rem auto 0.5rem;
-  @include phone { --content-max-width: 100%; }
+  @include phone { 
+    --content-max-width: 100%; 
+    /* padding-right: 3rem;  Removed to fix centering issue */
+    margin-top: 0.5rem; 
+  }
   @include tablet { --content-max-width: 98%; }
   @include laptop { --content-max-width: 90%; }
   @include monitor { --content-max-width: 85%; }
@@ -351,7 +355,7 @@ export default {
 
 /* Settings section, includes search, config and user settings */
 section.settings-outer {
-  border-bottom: 1px solid var(--outline-color);
+  border-bottom: none; /* Remove unwanted line */
   @include phone {
     flex-direction: column;
   }
