@@ -119,20 +119,20 @@
       "type": "object",
       "properties": {
         "title": {
-          "title": "Title",
+          "title": "网站标题",
           "type": "string",
-          "description": "Title and heading for the app"
+          "description": "应用的标题和头部显示"
         },
         "description": {
-          "title": "Description",
+          "title": "网站描述",
           "type": "string",
-          "description": "Sub-title, displayed in header"
+          "description": "副标题，显示在头部"
         },
         "navLinks": {
           "type": "array",
           "maxItems": 6,
-          "title": "Navigation Links",
-          "description": "Quick access links, displayed in header",
+          "title": "导航链接",
+          "description": "快捷访问链接，显示在头部",
           "items": {
             "type": "object",
             "additionalProperties": false,
@@ -163,14 +163,14 @@
           }
         },
         "footerText": {
-          "title": "Footer Text",
-          "description": "Content to display within the global page footer",
+          "title": "页脚文本",
+          "description": "显示在全局页面底部的内容",
           "type": "string"
         },
         "logo": {
-          "title": "App Logo",
+          "title": "网站 Logo",
           "type": "string",
-          "description": "Path to an optional image asset, to be displayed in the header",
+          "description": "可选的图片资源路径，显示在头部",
           "pattern": "^(http|/)(.*?)",
           "examples": [
             "/web-icons/laowang-logo.png",
@@ -185,7 +185,7 @@
       "type": "object",
       "properties": {
         "startingView": {
-          "title": "Starting View",
+          "title": "默认视图",
           "type": "string",
           "enum": [
             "default",
@@ -193,7 +193,7 @@
             "workspace"
           ],
           "default": "default",
-          "description": "Which page to load by default, and on the base page or domain root. You can still switch to different views from within the UI"
+          "description": "默认加载的页面视图"
         },
         "defaultOpeningMethod": {
           "title": "Default Opening Method",
@@ -223,15 +223,15 @@
           "description": "How often to recheck statuses. If set to 0, status will only be checked on page load"
         },
         "language": {
-          "title": "Language",
+          "title": "语言",
           "type": "string",
-          "description": "The ISO code of your desired language, must have translations present, check docs for more info"
+          "description": "您需要的语言的 ISO 代码"
         },
         "theme": {
-          "title": "Theme",
+          "title": "主题",
           "type": "string",
           "default": "callisto",
-          "description": "A theme to be applied by default on first load",
+          "description": "首次加载时默认应用的主题",
           "examples": [
             "callisto",
             "thebe",
@@ -257,9 +257,9 @@
           ]
         },
         "backgroundImg": {
-          "title": "Background Image",
+          "title": "背景图片",
           "type": "string",
-          "description": "A URL to an image asset to be displayed as background"
+          "description": "要作为背景显示的图片资源 URL"
         },
         "faviconApi": {
           "title": "Favicon API",
@@ -284,7 +284,7 @@
           "description": "An icon to apply to any items which don't yet have the icon set"
         },
         "layout": {
-          "title": "Default Layout",
+          "title": "默认布局",
           "type": "string",
           "enum": [
             "horizontal",
@@ -293,10 +293,10 @@
             "sidebar"
           ],
           "default": "auto",
-          "description": "Specifies sections layout orientation on the home screen"
+          "description": "指定主页上分类的布局方向"
         },
         "iconSize": {
-          "title": "Default Icon Size",
+          "title": "默认图标大小",
           "type": "string",
           "enum": [
             "small",
@@ -304,7 +304,7 @@
             "large"
           ],
           "default": "medium",
-          "description": "The size of each link item / icon"
+          "description": "每个链接项目/图标的大小"
         },
         "colCount": {
           "title": "Column Count",
@@ -450,39 +450,39 @@
           "description": "Any custom CSS overides to be applied globally, should be minified"
         },
         "hideComponents": {
-          "title": "Hidden Components",
+          "title": "隐藏组件",
           "type": "object",
-          "description": "Hide individual parts of the page. If not set, all components are visible by default",
+          "description": "隐藏页面的各个部分。如果未设置，默认所有组件都可见",
           "properties": {
             "hideHeading": {
-              "title": "Hide Heading?",
+              "title": "隐藏标题？",
               "type": "boolean",
               "default": "false",
-              "description": "If set to true, the page heading & subtitle will be hidden"
+              "description": "如果启用，页面标题和副标题将被隐藏"
             },
             "hideNav": {
-              "title": "Hide Nav Bar?",
+              "title": "隐藏导航栏？",
               "type": "boolean",
               "default": "false",
-              "description": "If set to true, the navigation menu will be hidden"
+              "description": "如果启用，导航菜单将被隐藏"
             },
             "hideSearch": {
-              "title": "Hide Search Bar?",
+              "title": "隐藏搜索栏？",
               "type": "boolean",
               "default": "false",
-              "description": "If set to true, the search bar will be hidden"
+              "description": "如果启用，搜索栏将被隐藏"
             },
             "hideSettings": {
-              "title": "Hide Settings?",
+              "title": "隐藏设置？",
               "type": "boolean",
               "default": "false",
-              "description": "If set to true, the settings buttons will be hidden"
+              "description": "如果启用，设置按钮将被隐藏"
             },
             "hideFooter": {
-              "title": "Hide Footer?",
+              "title": "隐藏页脚？",
               "type": "boolean",
               "default": "false",
-              "description": "If set to true, the page footer will be hidden"
+              "description": "如果启用，页面底部将被隐藏"
             }
           }
         },
