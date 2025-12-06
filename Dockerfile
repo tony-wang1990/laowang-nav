@@ -40,13 +40,13 @@ WORKDIR ${DIRECTORY}
 
 # Update tzdata for setting timezone
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories \
-    && apk add --no-cache tzdata
+  && apk add --no-cache tzdata
 
 # Copy built application from build phase
 COPY --from=BUILD_IMAGE /app ./
 
 # Finally, run start command to serve up the built application
-CMD [ "yarn", "build-and-start" ]
+CMD [ "yarn", "start" ]
 
 # Expose the port
 EXPOSE ${PORT}
