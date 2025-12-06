@@ -20,6 +20,15 @@
 
 [![Demo Site](https://img.shields.io/badge/🔗_点击体验_Demo-demo--nav.zeabur.app-00d4aa?style=for-the-badge&logo=zeabur)](https://demo-nav.zeabur.app/)
 
+> [!IMPORTANT]
+> **⏳ 首次访问加载提示**
+> 
+> 由于项目包含丰富的功能和资源文件,**首次访问可能需要 30-60 秒**的加载时间,请耐心等待。
+> 
+> ✅ **后续访问会非常快速** - 浏览器会缓存静态资源,再次访问几乎秒开!
+> 
+> 💡 **建议**: 首次访问时保持页面打开,等待完全加载后再体验功能。
+
 ---
 
 ### 🖥️ 桌面端主页 - 多栏布局
