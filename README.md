@@ -203,13 +203,44 @@ sections:
 
 ## 🙏 致谢
 
-本项目基于 [Dashy](https://github.com/Lissy93/dashy) 开发，增加了中文本地化和功能增强。
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/Lissy93/dashy">
+        <img src="https://avatars.githubusercontent.com/u/1862727?v=4" width="80px" alt="Dashy"/>
+        <br />
+        <sub><b>Dashy</b></sub>
+      </a>
+      <br />
+      <sub>原始项目</sub>
+    </td>
+    <td align="center">
+      <a href="https://github.com/Lissy93">
+        <img src="https://avatars.githubusercontent.com/u/1862727?v=4" width="80px" alt="Alicia Sykes"/>
+        <br />
+        <sub><b>Alicia Sykes</b></sub>
+      </a>
+      <br />
+      <sub>原作者</sub>
+    </td>
+  </tr>
+</table>
+
+> 💡 本项目基于 [Dashy](https://github.com/Lissy93/dashy) 二次开发，增加了中文本地化和功能增强。感谢原作者的开源贡献！
 
 ---
 
 ## 📄 许可证
 
-[MIT](https://github.com/tony-wang1990/laowang-nav/blob/master/LICENSE)
+<div align="center">
+
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](https://github.com/tony-wang1990/laowang-nav/blob/master/LICENSE)
+
+**开源协议** · 自由使用 · 允许修改 · 允许商用
+
+</div>
+
+> 📜 本项目采用 **MIT 许可证**，意味着你可以自由地使用、修改和分发本项目，但需保留原始版权声明。
 
 ---
 
