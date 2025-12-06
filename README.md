@@ -16,11 +16,17 @@
 
 <div align="center">
 
+### 🌐 在线演示
+
+[![Demo Site](https://img.shields.io/badge/🔗_点击体验_Demo-demo--nav.zeabur.app-00d4aa?style=for-the-badge&logo=zeabur)](https://demo-nav.zeabur.app/)
+
+---
+
 ### 🖥️ 桌面端主页 - 多栏布局
 
-![Desktop Homepage](docs/screenshots/demo-desktop.png)
+[![Desktop Homepage](docs/screenshots/demo-desktop.png)](https://demo-nav.zeabur.app/)
 
-*支持多栏分类展示，一目了然查看所有导航卡片*
+*👆 点击图片体验在线 Demo | 支持多栏分类展示，一目了然查看所有导航卡片*
 
 ---
 
