@@ -1,7 +1,8 @@
 appConfig:
   theme: colorful
-  faviconApi: google
-  enableErrorStatusIndicators: true
+  faviconApi: allesedv
+  enableErrorStatusIndicators: false
+  defaultIcon: favicon
 pageInfo:
   title: LaoWang Nav
   description: 您的个人导航站
