@@ -26,7 +26,7 @@ jobs:
         run: npm install js-yaml
 
       - name: Run sync script
-        run: node sync_nav.js
+        run: node scripts/sync/sync_nav.js
 
       - name: Check for changes
         id: git-check
