@@ -27,82 +27,6 @@ export default {
       weather: {
         temp: '--',
         condition: '加载中...',
-      },
-    };
-  },
-  mounted() {
-    this.updateDateTime();
-    this.fetchWeather();
-    setInterval(this.updateDateTime, 60000);
-  },
-  methods: {
-    updateDateTime() {
-      const now = new Date();
-      const year = now.getFullYear();
-      const month = String(now.getMonth() + 1).padStart(2, '0');
-      const day = String(now.getDate()).padStart(2, '0');
-      this.currentDate = `${year}年${month}月${day}日`;
-
-      const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
-      this.currentWeekday = weekdays[now.getDay()];
-    },
-    async fetchWeather() {
-      try {
-        const response = await fetch('https://wttr.in/?format=j1');
-        const data = await response.json();
-        const current = data.current_condition[0];
-        this.weather.temp = current.temp_C;
-        this.weather.condition = this.translateWeather(current.weatherDesc[0].value);
-      } catch (error) {
-        console.error('Failed to fetch weather:', error);
-        this.weather.condition = '晴';
-      }
-    },
-    translateWeather(desc) {
-      const translations = {
-        Clear: '晴',
-        Sunny: '晴',
-        'Partly cloudy': '多云',
-        Cloudy: '阴',
-        Overcast: '阴',
-        Mist: '薄雾',
-        Fog: '雾',
-        'Light rain': '小雨',
-        'Moderate rain': '中雨',
-        'Heavy rain': '大雨',
-        'Light snow': '小雪',
-        'Moderate snow': '中雪',
-        'Heavy snow': '大雪',
-      };
-      return translations[desc] || desc;
-    },
-  },
-};
-</script>
-<template>
-  <div class="header-info">
-    <div class="info-item date-info">
-      <span class="date">{{ currentDate }}</span>
-      <span class="weekday">{{ currentWeekday }}</span>
-    </div>
-    <div class="divider"></div>
-    <div class="info-item weather-info">
-      <span class="temp">{{ weather.temp }}°C</span>
-      <span class="condition">{{ weather.condition }}</span>
-    </div>
-  </div>
-</template>
-
-<script>
-export default {
-  name: 'HeaderInfo',
-  data() {
-    return {
-      currentDate: '',
-      currentWeekday: '',
-      weather: {
-        temp: '--',
-        condition: '加载中...',
         location: '',
       },
     };
@@ -134,24 +58,23 @@ export default {
         // Extract location (City name)
         if (data.nearest_area && data.nearest_area[0]) {
           const area = data.nearest_area[0];
-          // Try to get city name from areaName or region
-          // User requested "XX County" or region
           this.weather.location = area.areaName[0].value || area.region[0].value;
         }
-      } catch (error) {
-        console.error('Failed to fetch weather:', error);
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error('Failed to fetch weather:', err);
         this.weather.condition = '晴';
       }
     },
     translateWeather(desc) {
       const translations = {
-        'Clear': '晴',
-        'Sunny': '晴',
+        Clear: '晴',
+        Sunny: '晴',
         'Partly cloudy': '多云',
-        'Cloudy': '阴',
-        'Overcast': '阴',
-        'Mist': '薄雾',
-        'Fog': '雾',
+        Cloudy: '阴',
+        Overcast: '阴',
+        Mist: '薄雾',
+        Fog: '雾',
         'Light rain': '小雨',
         'Moderate rain': '中雨',
         'Heavy rain': '大雨',
@@ -206,7 +129,6 @@ export default {
 
       .location-row {
         display: flex;
-        /* Align location to start to match date */
         justify-content: flex-start;
       }
 
@@ -233,7 +155,6 @@ export default {
       min-height: 60px;
 
       .info-item {
-        /* Keep column layout for tablets */
         flex-direction: column;
         gap: 0.2rem;
 
@@ -250,12 +171,10 @@ export default {
       }
     }
 
-    /* Mobile styles (approx < 600px) */
     @media (max-width: 600px) {
       padding: 0.5rem 1rem;
       gap: 0.5rem;
       min-height: auto;
-      /* width: 100%;  Removed to allow flow with GitHub link */
       justify-content: center;
 
       .info-item {
@@ -263,25 +182,18 @@ export default {
         align-items: baseline;
         gap: 0.3rem;
 
-        /* On mobile, maybe hide location or put it inline?
-           User didn't specify mobile behavior for location, but usually space is tight.
-           I'll try to keep it if possible, or hide it.
-           Let's keep it but maybe smaller.
-        */
-
         .date-row {
             gap: 0.3rem;
         }
 
         .location-row {
-            display: none; /* Hide location on very small screens to avoid clutter? Or keep it? */
+            display: none;
         }
 
         .date, .temp {
           font-size: 1rem;
         }
 
-        /* Hide weekday on mobile to save space for single line */
         .weekday {
             display: none;
         }
