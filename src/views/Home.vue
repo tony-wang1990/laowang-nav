@@ -62,7 +62,6 @@
 <script>
 import HomeMixin from '@/mixins/HomeMixin';
 import SettingsContainer from '@/components/Settings/SettingsContainer.vue';
-import HeaderInfo from '@/components/PageStrcture/HeaderInfo.vue';
 import SearchEngineSelector from '@/components/Settings/SearchEngineSelector.vue';
 import Section from '@/components/LinkItems/Section.vue';
 import EditModeSaveMenu from '@/components/InteractiveEditor/EditModeSaveMenu.vue';
@@ -79,7 +78,6 @@ export default {
   mixins: [HomeMixin],
   components: {
     SettingsContainer,
-    HeaderInfo,
     SearchEngineSelector,
     EditModeSaveMenu,
     ExportConfigMenu,

@@ -3,7 +3,11 @@
       <div class="logo-container">
         <div class="title-glass-wrapper">
           <div class="logo-wrapper">
-            <TransparentLogo :src="require('@/assets/logo-icon.png')" :tolerance="80" class="img-logo" />
+            <TransparentLogo
+              :src="require('@/assets/logo-icon.png')"
+              :tolerance="80"
+              class="img-logo"
+            />
             <span class="logo-text">LaoWang Nav</span>
             <sup class="trademark">®</sup>
           </div>
@@ -22,7 +26,6 @@
 </template>
 
 <script>
-import PageTitle from '@/components/PageStrcture/PageTitle.vue';
 import HeaderInfo from '@/components/PageStrcture/HeaderInfo.vue';
 import Nav from '@/components/PageStrcture/Nav.vue';
 import TransparentLogo from '@/components/PageStrcture/TransparentLogo.vue';
@@ -31,7 +34,6 @@ import { shouldBeVisible } from '@/utils/SectionHelpers';
 export default {
   name: 'Header',
   components: {
-    PageTitle,
     HeaderInfo,
     Nav,
     TransparentLogo,

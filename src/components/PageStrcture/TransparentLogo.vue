@@ -1,6 +1,18 @@
 <template>
-  <img :src="processedSrc" v-if="processedSrc" class="transparent-logo" alt="Logo" />
-  <img :src="src" v-else class="transparent-logo hidden" @load="processImage" ref="originalImage" alt="Logo Original" />
+  <img
+    :src="processedSrc"
+    v-if="processedSrc"
+    class="transparent-logo"
+    alt="Logo"
+  />
+  <img
+    :src="src"
+    v-else
+    class="transparent-logo hidden"
+    @load="processImage"
+    ref="originalImage"
+    alt="Logo Original"
+  />
 </template>
 
 <script>
