@@ -14,7 +14,7 @@
     "loading": "Loading"
   },
   "login": {
-    "title": "Dashy",
+    "title": "LaoWang Nav",
     "guest-label": "Guest Access",
     "username-label": "Username",
     "password-label": "Password",
@@ -49,11 +49,11 @@
     "error-log": "Error Log",
     "no-errors": "No recent errors detected",
     "help-support": "Help & Support",
-    "help-support-description": "For getting support with running or configuring Dashy, see the",
+    "help-support-description": "For getting support with running or configuring LaoWang Nav, see the",
     "help-support-discussions": "Discussions",
-    "support-dashy": "Supporting Dashy",
+    "support-dashy": "Supporting This Project",
     "support-dashy-description": "For ways that you can get involved, check out the",
-    "support-dashy-link": "Contributions page",
+    "support-dashy-link": "GitHub Repository",
     "report-bug": "Report a Bug",
     "report-bug-description": "If you think you've found a bug, then please",
     "report-bug-link": "raise an Issue",
@@ -61,7 +61,7 @@
     "source": "Source",
     "documentation": "Documentation",
     "privacy-and-security": "Privacy & Security",
-    "privacy-and-security-l1": "For a break-down of how your data is managed by Dashy, see the",
+    "privacy-and-security-l1": "For a break-down of how your data is managed by LaoWang Nav, see the",
     "privacy-and-security-privacy-policy": "Privacy Policy",
     "privacy-and-security-advice": "For advise in securing your dashboard, you can reference the",
     "privacy-and-security-advice-link": "Management Docs",
@@ -136,10 +136,10 @@
     "open": "Open"
   },
   "updates": {
-    "app-version-note": "Dashy version",
+    "app-version-note": "LaoWang Nav version",
     "up-to-date": "Up-to-Date",
     "out-of-date": "Update Available",
-    "unsupported-version-l1": "You are using an unsupported version of Dashy",
+    "unsupported-version-l1": "You are using an unsupported version of LaoWang Nav",
     "unsupported-version-l2": "For the best experience, and recent security patches, please update to"
   },
   "language-switcher": {
@@ -196,7 +196,7 @@
   },
   "cloud-sync": {
     "title": "Cloud Backup & Restore",
-    "intro-l1": "Cloud backup and restore is an optional feature, that enables you to upload your config to the internet, and then restore it on any other device or instance of Dashy.",
+    "intro-l1": "Cloud backup and restore is an optional feature, that enables you to upload your config to the internet, and then restore it on any other device or instance of LaoWang Nav.",
     "intro-l2": "All data is fully end-to-end encrypted with AES, using your password as the key.",
     "intro-l3": "For more info, please see the",
     "intro-docs": "docs",
@@ -314,7 +314,7 @@
   },
   "critical-error": {
     "title": "Configuration Load Error",
-    "subtitle": "Dashy has failed to load correctly due to a configuration error.",
+    "subtitle": "LaoWang Nav has failed to load correctly due to a configuration error.",
     "sub-ensure-that": "Ensure that",
     "sub-error-details": "Error Details",
     "sub-next-steps": "Next Steps",

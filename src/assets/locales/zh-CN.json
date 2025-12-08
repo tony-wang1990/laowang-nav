@@ -14,7 +14,7 @@
     "loading": "加载中"
   },
   "login": {
-    "title": "Dashy",
+    "title": "LaoWang Nav",
     "guest-label": "访客访问",
     "username-label": "用户名",
     "password-label": "密码",
@@ -49,11 +49,11 @@
     "error-log": "错误日志",
     "no-errors": "未检测到最近的错误",
     "help-support": "帮助与支持",
-    "help-support-description": "如需有关Dashy运行或配置的支持，请查看",
+    "help-support-description": "如需有关LaoWang Nav运行或配置的支持，请查看",
     "help-support-discussions": "讨论",
-    "support-dashy": "支持Dashy",
-    "support-dashy-description": "了解参与Dashy项目的方式，请查看",
-    "support-dashy-link": "贡献页面",
+    "support-dashy": "支持本项目",
+    "support-dashy-description": "了解参与本项目的方式，请查看",
+    "support-dashy-link": "GitHub仓库",
     "report-bug": "报告漏洞",
     "report-bug-description": "如果您认为发现了漏洞，请",
     "report-bug-link": "提交问题",
@@ -61,7 +61,7 @@
     "source": "源代码",
     "documentation": "文档",
     "privacy-and-security": "隐私与安全",
-    "privacy-and-security-l1": "关于Dashy如何管理您的数据的详细信息，请参阅",
+    "privacy-and-security-l1": "关于LaoWang Nav如何管理您的数据的详细信息，请参阅",
     "privacy-and-security-privacy-policy": "隐私政策",
     "privacy-and-security-advice": "如果您需要保护您的仪表盘，请参考",
     "privacy-and-security-advice-link": "管理文档",
@@ -136,10 +136,10 @@
     "open": "打开"
   },
   "updates": {
-    "app-version-note": "Dashy 版本",
+    "app-version-note": "LaoWang Nav 版本",
     "up-to-date": "已经是最新版了",
     "out-of-date": "存在可用更新",
-    "unsupported-version-l1": "你使用的是不受支持的 Dashy 版本",
+    "unsupported-version-l1": "你使用的是不受支持的 LaoWang Nav 版本",
     "unsupported-version-l2": "为获得最佳体验和最近的安全补丁，请更新至"
   },
   "language-switcher": {
@@ -196,7 +196,7 @@
   },
   "cloud-sync": {
     "title": "云备份&恢复",
-    "intro-l1": "云备份和云恢复是一项试验性功能，你将配置上传到网络，然后在其他设备或 Dashy 实例上恢复。",
+    "intro-l1": "云备份和云恢复是一项试验性功能，你将配置上传到网络，然后在其他设备或 LaoWang Nav 实例上恢复。",
     "intro-l2": "所有数据都使用AES端对端加密，使用你的密码作为密钥。",
     "intro-docs": "文档",
     "intro-l3": "有关更多信息，请参阅",
