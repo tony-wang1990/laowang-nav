@@ -43,9 +43,9 @@ function transformCard(card) {
   };
 }
 
-// Check if two items are the same (by URL)
+// Check if two items are the same (by title - so user can modify URL without duplicates)
 function isSameItem(item1, item2) {
-  return item1.url === item2.url;
+  return item1.title === item2.title;
 }
 
 // Check if an item already exists in a list
