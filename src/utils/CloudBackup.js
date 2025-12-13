@@ -29,7 +29,7 @@ const makeSubHash = (pass) => sha256(pass).toString().slice(0, 14);
 /* Makes the backup */
 export const backup = (data, password) => {
   const endpoint = getEndpoint();
-  if (!endpoint) return Promise.reject({ data: { errorMsg: 'Backup endpoint not configured' } });
+  if (!endpoint) return Promise.reject(new Error('Backup endpoint not configured'));
   return axios.post(endpoint, {
     userData: encryptData(data, password),
     subHash: makeSubHash(password),
@@ -39,7 +39,7 @@ export const backup = (data, password) => {
 /* Updates and existing backup */
 export const update = (data, password, backupId) => {
   const endpoint = getEndpoint();
-  if (!endpoint) return Promise.reject({ data: { errorMsg: 'Backup endpoint not configured' } });
+  if (!endpoint) return Promise.reject(new Error('Backup endpoint not configured'));
   return axios.put(endpoint, {
     backupId,
     userData: encryptData(data, password),
@@ -53,7 +53,7 @@ const encodeGetParams = p => Object.entries(p).map(kv => kv.map(encodeURICompone
 export const restore = (backupId, password) => {
   const params = encodeGetParams({ backupId, subHash: makeSubHash(password) });
   const endpoint = getEndpoint();
-  if (!endpoint) return Promise.reject('Backup endpoint not configured');
+  if (!endpoint) return Promise.reject(new Error('Backup endpoint not configured'));
   const url = `${endpoint}/?${params}`;
   return new Promise((resolve, reject) => {
     axios.get(url).then((response) => {

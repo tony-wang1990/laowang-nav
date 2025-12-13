@@ -192,7 +192,7 @@ module.exports = {
     defaultDelay: { show: 380, hide: 0 },
     // delay: { show: 380, hide: 0 },
   },
-  /* Server location of the Backup & Sync cloud function 
+  /* Server location of the Backup & Sync cloud function
    * NOTE: Set this to your own self-hosted sync service endpoint.
    * Leave empty to disable cloud backup by default.
    */

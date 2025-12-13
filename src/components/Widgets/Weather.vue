@@ -55,7 +55,7 @@ export default {
       this.loading = true;
       // 1. Try VVHan (Best for China)
       if (await this.fetchVVHan()) return;
-      
+
       // 2. Try Oioweb (Backup for China)
       if (await this.fetchOioweb()) return;
 
@@ -111,7 +111,7 @@ export default {
           ? `lat=${lat}&lon=${lon}&appid=${apiKey}&units=${this.units}`
           : `q=${city || 'Beijing'}&appid=${apiKey}&units=${this.units}`;
         const url = `${widgetApiEndpoints.weather}?${params}`;
-        
+
         const res = await fetch(url);
         const data = await res.json();
         if (data.cod === 200) {
@@ -129,14 +129,18 @@ export default {
         const data = await res.json();
         const current = data.current_condition[0];
         const area = data.nearest_area[0];
-        
+
         this.temp = current.temp_C; // Wttr defaults usually metric
         this.description = current.weatherDesc[0].value;
-        this.location = area.areaName[0].value;
+        // 优先使用 region > areaName，过滤不合理的地名
+        const rawLocation = area.region?.[0]?.value
+          || area.areaName?.[0]?.value
+          || '';
+        this.location = this.sanitizeLocation(rawLocation);
         this.icon = '01d'; // Hard to map seamlessly, use default
       } catch (e) {
         this.description = 'Offline';
-        this.location = 'Unknown';
+        this.location = '';
       }
     },
 
@@ -157,7 +161,7 @@ export default {
       this.weatherDetails = [[
         { label: 'Low', value: info.low },
         { label: 'High', value: info.high },
-        { label: 'Wind', value: info.fengxiang }
+        { label: 'Wind', value: info.fengxiang },
       ]];
     },
 
@@ -187,6 +191,16 @@ export default {
       ];
     },
 
+    /* 过滤不合理的地名 */
+    sanitizeLocation(location) {
+      if (!location) return '';
+      const invalidNames = ['Coffee', 'Unknown', 'undefined', 'null'];
+      if (invalidNames.some(n => location.toLowerCase().includes(n.toLowerCase()))) {
+        return '';
+      }
+      return location;
+    },
+
     toggleDetails() { this.showDetails = !this.showDetails; },
     checkProps() { /* Deprecated strict checks, but we keep structure */ },
   },
@@ -213,13 +227,13 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
-    
+
     .main-info {
       display: flex;
       justify-content: space-around;
       width: 100%;
       align-items: center;
-      
+
       .owi {
         font-size: 3rem;
         color: var(--widget-text-color);
@@ -230,7 +244,7 @@ export default {
         margin: 0;
       }
     }
-    
+
     .location {
       margin: 0.2rem 0 0 0;
       font-size: 0.9rem;

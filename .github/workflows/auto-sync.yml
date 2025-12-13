@@ -38,7 +38,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add user-data/conf.yml synced_sections.json menus.json
+          git add user-data/conf.yml data/menus.json
           git commit -m "🔄 Auto sync: Update navigation data from nav.eooce.com"
           git push
 

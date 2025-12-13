@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a237e"/>
+      <stop offset="100%" style="stop-color:#0d47a1"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffd54f"/>
+      <stop offset="100%" style="stop-color:#ff8f00"/>
+    </linearGradient>
+    <linearGradient id="redGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ef5350"/>
+      <stop offset="100%" style="stop-color:#c62828"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="240" fill="url(#bgGrad)"/>
+  
+  <!-- Outer ring -->
+  <circle cx="256" cy="256" r="220" fill="none" stroke="url(#goldGrad)" stroke-width="8"/>
+  
+  <!-- Inner decorative ring -->
+  <circle cx="256" cy="256" r="180" fill="none" stroke="rgba(255,215,79,0.3)" stroke-width="2"/>
+  
+  <!-- Direction markers N, S, E, W -->
+  <g font-family="Arial, sans-serif" font-weight="bold" font-size="36" text-anchor="middle">
+    <text x="256" y="80" fill="url(#goldGrad)">N</text>
+    <text x="256" y="460" fill="rgba(255,255,255,0.6)">S</text>
+    <text x="432" y="268" fill="rgba(255,255,255,0.6)">E</text>
+    <text x="80" y="268" fill="rgba(255,255,255,0.6)">W</text>
+  </g>
+  
+  <!-- Small tick marks -->
+  <g stroke="rgba(255,215,79,0.4)" stroke-width="2">
+    <!-- NE -->
+    <line x1="380" y1="132" x2="365" y2="147"/>
+    <!-- SE -->
+    <line x1="380" y1="380" x2="365" y2="365"/>
+    <!-- SW -->
+    <line x1="132" y1="380" x2="147" y2="365"/>
+    <!-- NW -->
+    <line x1="132" y1="132" x2="147" y2="147"/>
+  </g>
+  
+  <!-- Compass needle - North (red) -->
+  <polygon points="256,100 280,256 232,256" fill="url(#redGrad)"/>
+  
+  <!-- Compass needle - South (white) -->
+  <polygon points="256,412 280,256 232,256" fill="rgba(255,255,255,0.9)"/>
+  
+  <!-- Center circle -->
+  <circle cx="256" cy="256" r="24" fill="url(#goldGrad)"/>
+  <circle cx="256" cy="256" r="12" fill="#1a237e"/>
+</svg>
