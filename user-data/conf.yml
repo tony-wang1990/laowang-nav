@@ -628,6 +628,10 @@ sections:
         description: 远程控制
         icon: https://www.raylink.live/logo.ico
         url: https://www.raylink.live
+      - title: 易破解
+        description: 精品windows软件
+        icon: https://www.ypojie.com/favicon.ico
+        url: https://www.ypojie.com
   - name: Software - Proxy
     items:
       - title: V2rayN
