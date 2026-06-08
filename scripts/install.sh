@@ -36,7 +36,16 @@ echo ""
 
 # 询问端口
 echo -e "${BLUE}请输入要使用的端口 (默认 8080):${NC}"
-read -t 10 -p "> " PORT || PORT=""
+if [ -t 0 ]; then
+    read -t 10 -p "> " PORT || PORT=""
+else
+    # 管道模式下直接使用默认端口
+    echo "非交互模式，使用默认端口..."
+    PORT=""
+fi
+
+# 去除可能的空白字符
+PORT=$(echo "$PORT" | tr -d '[:space:]')
 PORT=${PORT:-$DEFAULT_PORT}
 echo -e "使用端口: ${GREEN}${PORT}${NC}"
 echo ""
