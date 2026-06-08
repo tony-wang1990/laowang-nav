@@ -11,12 +11,8 @@
       :class="`simple-icons ${size}`"
       @error="imageNotFound"
     />
-    <!-- Generative SVG icon (data URI) - no @error to prevent infinite loop -->
-    <img v-else-if="fallbackStage >= 2 && iconPath" :src="iconPath"
-      :class="`tile-icon ${size}`"
-    />
-    <!-- Standard image asset icon -->
-    <img v-else-if="iconPath" :src="iconPath"
+    <!-- Image asset icon (stage 0 and 1) -->
+    <img v-else-if="fallbackStage < 2 && iconPath" :src="iconPath"
       @error="imageNotFound"
       :class="`tile-icon ${size}`"
     />
@@ -63,13 +59,13 @@ export default {
     },
     /* Text to show in inline generative icon (last resort fallback) */
     generativeText() {
-      const src = this.url || this.label || 'W';
-      return this.extractInitials(this.safeHostname(src));
+      const src = this.label || this.getHostName(this.url) || 'W';
+      return this.extractInitials(src);
     },
     /* Style for inline generative icon */
     generativeStyle() {
-      const src = this.url || this.label || 'W';
-      const [color1, color2] = this.generateGradientColors(this.safeHostname(src));
+      const src = this.label || this.getHostName(this.url) || 'W';
+      const [color1, color2] = this.generateGradientColors(src);
       return {
         background: `linear-gradient(135deg, ${color1}, ${color2})`,
         color: '#fff',
@@ -121,14 +117,9 @@ export default {
     },
     /* Return the path to icon asset, depending on icon type */
     getIconPath(img, url, fallbackStage = this.fallbackStage) {
-      // Stage 3+: return empty, template v-else handles inline icon
-      if (fallbackStage >= 3) {
-        return '';
-      }
-
-      // Stage 2: generate local SVG data URI
+      // Stage 2+: return empty, template v-else handles inline CSS icon
       if (fallbackStage >= 2) {
-        return this.getGenerativeIcon(url || this.label || 'Web');
+        return '';
       }
 
       // Stage 1: try a backup favicon API
@@ -138,10 +129,10 @@ export default {
         const backupCandidates = ['wuruihong', 'iowen', 'duckduckgo', 'google'];
         const backupApi = backupCandidates.find(a => a !== userDefault && faviconApiEndpoints[a]);
         if (!backupApi) {
-          return this.getGenerativeIcon(url || this.label || 'Web');
+          return '';
         }
         const backupUrl = this.getFavicon(url, backupApi);
-        return backupUrl || this.getGenerativeIcon(url || this.label || 'Web');
+        return backupUrl || '';
       }
 
       // Stage 0: handle by icon type
@@ -150,7 +141,7 @@ export default {
         case 'img': return this.getLocalImagePath(img);
         case 'favicon': return this.getFavicon(url);
         case 'custom-favicon': return this.getCustomFavicon(url, img);
-        case 'generative': return this.getGenerativeIcon(url || this.label || 'Web');
+        case 'generative': return '';
         case 'mdi': return img;
         case 'simple-icons': return this.getSimpleIcon(img);
         case 'home-lab-icons': return this.getHomeLabIcon(img);
@@ -161,9 +152,9 @@ export default {
           if (url && url.includes('http')) {
             return this.getFavicon(url);
           }
-          return this.getGenerativeIcon(this.label || 'Web');
+          return '';
         default:
-          return this.getGenerativeIcon(url || this.label || 'W');
+          return '';
       }
     },
     /* Check if a string is in a URL format */
@@ -252,49 +243,6 @@ export default {
         return new URL(url).hostname || url;
       } catch (e) {
         return url;
-      }
-    },
-    /* Generates a local SVG icon as a data URI (safe, no external requests) */
-    getGenerativeIcon(url) {
-      try {
-        const rawStr = url || this.label || 'Web';
-        const host = this.safeHostname(rawStr) || rawStr || 'W';
-        const text = this.extractInitials(host);
-        const [color1, color2] = this.generateGradientColors(host);
-        const uid = Math.abs(this.hashCode(host));
-
-        // Build SVG without template literals to avoid encoding issues
-        const svgParts = [
-          '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">',
-          '<defs>',
-          '<linearGradient id="g' + uid + '" x1="0%" y1="0%" x2="100%" y2="100%">',
-          '<stop offset="0%" style="stop-color:' + color1 + ';stop-opacity:1"/>',
-          '<stop offset="100%" style="stop-color:' + color2 + ';stop-opacity:1"/>',
-          '</linearGradient>',
-          '</defs>',
-          '<rect width="128" height="128" rx="20" fill="url(#g' + uid + ')"/>',
-          '<text x="64" y="64" dominant-baseline="central" text-anchor="middle"',
-          ' font-family="Arial,sans-serif" font-size="56" font-weight="700"',
-          ' fill="#fff" opacity="0.95">' + text + '</text>',
-          '</svg>',
-        ];
-        const svgContent = svgParts.join('');
-
-        // Safe UTF-8 → base64 encoding
-        let base64;
-        try {
-          // Modern: TextEncoder handles multi-byte chars (Chinese) correctly
-          const bytes = new TextEncoder().encode(svgContent);
-          const binary = Array.from(bytes, b => String.fromCharCode(b)).join('');
-          base64 = btoa(binary);
-        } catch (e) {
-          // Legacy fallback
-          base64 = btoa(unescape(encodeURIComponent(svgContent)));
-        }
-        return 'data:image/svg+xml;base64,' + base64;
-      } catch (err) {
-        // If encoding fails entirely, return empty → triggers v-else inline icon
-        return '';
       }
     },
     /* Extract initials from string (supports Chinese and English) */
