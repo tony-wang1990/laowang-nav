@@ -7,17 +7,23 @@
     <!-- Material Design Icon -->
     <span v-else-if="iconType === 'mdi'" :class="` mdi ${icon} ${size}`"></span>
     <!-- Simple-Icons -->
-    <img v-else-if="iconType === 'si'" :src="iconPath"
+    <img v-else-if="iconType === 'simple-icons' && iconPath" :src="iconPath"
+      ref="iconImg"
       :class="`simple-icons ${size}`"
       @error="imageNotFound"
+      @load="imageLoaded"
     />
-    <!-- Image asset icon (stage 0 and 1) -->
-    <img v-else-if="fallbackStage < 2 && iconPath" :src="iconPath"
+    <!-- Image asset icon -->
+    <img v-else-if="iconPath" :src="iconPath"
+      ref="iconImg"
       @error="imageNotFound"
+      @load="imageLoaded"
       :class="`tile-icon ${size}`"
     />
     <!-- Final fallback: inline CSS generative icon (no image loading, never fails) -->
-    <span v-else :class="`generative-icon-text ${size}`" :style="generativeStyle">{{ generativeText }}</span>
+    <span v-else :class="`generative-icon-text ${size}`" :style="generativeStyle">
+      {{ generativeText }}
+    </span>
   </div>
 </template>
 
@@ -57,14 +63,17 @@ export default {
       const stage = this.fallbackStage;
       return this.getIconPath(this.effectiveIcon, this.url, stage);
     },
+    faviconFallbackApis() {
+      return this.getOrderedFaviconApis();
+    },
     /* Text to show in inline generative icon (last resort fallback) */
     generativeText() {
-      const src = this.label || this.getHostName(this.url) || 'W';
+      const src = this.label || this.safeHostname(this.url) || 'W';
       return this.extractInitials(src);
     },
     /* Style for inline generative icon */
     generativeStyle() {
-      const src = this.label || this.getHostName(this.url) || 'W';
+      const src = this.label || this.safeHostname(this.url) || 'W';
       const [color1, color2] = this.generateGradientColors(src);
       return {
         background: `linear-gradient(135deg, ${color1}, ${color2})`,
@@ -81,31 +90,37 @@ export default {
   data() {
     return {
       fallbackStage: 0,
-      // Stage 0: use configured icon / favicon API
-      // Stage 1: try backup favicon API
-      // Stage 2: use generative SVG data URI
-      // Stage 3: use inline CSS text icon (never fails)
+      iconLoadTimer: null,
     };
   },
   watch: {
     /* Reset fallbackStage whenever the icon source changes */
     icon() {
-      this.fallbackStage = 0;
+      this.resetFallback();
     },
     url() {
-      this.fallbackStage = 0;
+      this.resetFallback();
     },
+    iconPath() {
+      this.scheduleImageFallback();
+    },
+  },
+  mounted() {
+    this.scheduleImageFallback();
+  },
+  beforeDestroy() {
+    this.clearImageFallbackTimer();
   },
   methods: {
     /* Determine icon type, e.g. local or remote asset, SVG, favicon, font-awesome, etc */
     determineImageType(img) {
       let imgType = '';
       if (!img) imgType = 'auto-fetch';
-      else if (this.isUrl(img)) imgType = 'url';
+      else if (this.isUrl(img) || this.isDataImage(img)) imgType = 'url';
       else if (this.isImage(img)) imgType = 'img';
       else if (img.includes('fa-')) imgType = 'font-awesome';
       else if (img.includes('mdi-')) imgType = 'mdi';
-      else if (img.includes('si-')) imgType = 'si';
+      else if (img.includes('si-')) imgType = 'simple-icons';
       else if (img.includes('hl-')) imgType = 'home-lab-icons';
       else if (img.includes('sh-')) imgType = 'selfhst-icons';
       else if (img.includes('favicon-')) imgType = 'custom-favicon';
@@ -117,26 +132,19 @@ export default {
     },
     /* Return the path to icon asset, depending on icon type */
     getIconPath(img, url, fallbackStage = this.fallbackStage) {
-      // Stage 2+: return empty, template v-else handles inline CSS icon
-      if (fallbackStage >= 2) {
-        return '';
+      const type = this.determineImageType(img);
+      const shouldAutoFetch = type === 'favicon' || type === 'auto-fetch';
+
+      if (shouldAutoFetch) {
+        if (!url || !url.includes('http')) return '';
+        const api = this.faviconFallbackApis[fallbackStage];
+        return api ? this.getFavicon(url, api) : '';
       }
 
-      // Stage 1: try a backup favicon API
-      if (fallbackStage === 1) {
-        const userDefault = this.appConfig.faviconApi || defaultFaviconApi;
-        // Pick a different backup than what's currently configured
-        const backupCandidates = ['wuruihong', 'iowen', 'duckduckgo', 'google'];
-        const backupApi = backupCandidates.find(a => a !== userDefault && faviconApiEndpoints[a]);
-        if (!backupApi) {
-          return '';
-        }
-        const backupUrl = this.getFavicon(url, backupApi);
-        return backupUrl || '';
-      }
+      // Explicit icon failed once, so use the guaranteed inline fallback.
+      if (fallbackStage > 0) return '';
 
-      // Stage 0: handle by icon type
-      switch (this.determineImageType(img)) {
+      switch (type) {
         case 'url': return img;
         case 'img': return this.getLocalImagePath(img);
         case 'favicon': return this.getFavicon(url);
@@ -149,9 +157,6 @@ export default {
         case 'svg': return img;
         case 'emoji': return img;
         case 'auto-fetch':
-          if (url && url.includes('http')) {
-            return this.getFavicon(url);
-          }
           return '';
         default:
           return '';
@@ -161,6 +166,9 @@ export default {
     isUrl(str) {
       const pattern = new RegExp(/(http|https):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%!\-/]))?/);
       return pattern.test(str);
+    },
+    isDataImage(str) {
+      return typeof str === 'string' && str.startsWith('data:image/');
     },
     /* Returns true if the input is a path to an image file */
     isImage(img) {
@@ -278,7 +286,7 @@ export default {
     },
     /* Returns the CDN URL for the icon */
     getSimpleIcon(img) {
-      return 'https://cdn.simpleicons.org/' + img.slice(3);
+      return `https://cdn.simpleicons.org/${img.slice(3)}`;
     },
     getSelfhstIcon(img, cdn) {
       const imageName = img.slice(3).toLocaleLowerCase();
@@ -288,16 +296,63 @@ export default {
       const imageName = img.replace('hl-', '').toLocaleLowerCase();
       return (cdn || iconCdns.homeLabIcons).replace('{icon}', imageName);
     },
+    resetFallback() {
+      this.fallbackStage = 0;
+      this.scheduleImageFallback();
+    },
+    clearImageFallbackTimer() {
+      if (this.iconLoadTimer) {
+        clearTimeout(this.iconLoadTimer);
+        this.iconLoadTimer = null;
+      }
+    },
+    scheduleImageFallback() {
+      this.clearImageFallbackTimer();
+      if (!this.iconPath) return;
+      this.$nextTick(() => {
+        const img = this.$refs.iconImg;
+        if (!img || (img.complete && img.naturalWidth >= 2 && img.naturalHeight >= 2)) return;
+        this.iconLoadTimer = setTimeout(() => {
+          const currentImg = this.$refs.iconImg;
+          if (currentImg && (!currentImg.complete
+            || currentImg.naturalWidth < 2
+            || currentImg.naturalHeight < 2)) {
+            this.imageNotFound();
+          }
+        }, 1800);
+      });
+    },
+    getOrderedFaviconApis() {
+      const configuredApi = this.appConfig.faviconApi || defaultFaviconApi;
+      const preferredApis = [
+        configuredApi,
+        'google',
+        'duckduckgo',
+        'faviconkit',
+        'iconhorse',
+      ];
+      return [...new Set(preferredApis)].filter(api => faviconApiEndpoints[api]);
+    },
+    /* Some favicon APIs return a successful but empty image. Treat it as a miss. */
+    imageLoaded(event) {
+      this.clearImageFallbackTimer();
+      const img = event?.target;
+      if (img && (img.naturalWidth < 2 || img.naturalHeight < 2)) {
+        this.imageNotFound();
+      }
+    },
     /* Called when the path to the image cannot be resolved */
     imageNotFound() {
-      // Advance through fallback stages (max 3)
-      // Stage 0→1: try backup API
-      // Stage 1→2: use generative SVG data URI (img without @error)
-      // Stage 2→3: would normally not happen (no @error on stage-2 img)
-      //             but just in case, stage 3 uses inline span (never fails)
-      if (this.fallbackStage < 3) {
-        this.fallbackStage += 1;
+      this.clearImageFallbackTimer();
+      const type = this.determineImageType(this.effectiveIcon);
+      if (type === 'favicon' || type === 'auto-fetch') {
+        const nextStage = this.fallbackStage + 1;
+        if (nextStage < this.faviconFallbackApis.length) {
+          this.fallbackStage = nextStage;
+          return;
+        }
       }
+      this.fallbackStage = Number.MAX_SAFE_INTEGER;
     },
   },
 };

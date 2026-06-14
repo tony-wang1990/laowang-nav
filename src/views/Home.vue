@@ -106,11 +106,10 @@ export default {
     /* Return sections with filtered items, that match users search term */
     filteredSections() {
       const sections = this.singleSectionView || this.sections;
-      return sections.map((_section) => {
-        const section = _section;
-        section.filteredItems = this.filterTiles(section.items, this.searchValue);
-        return section;
-      });
+      return sections.map(section => ({
+        ...section,
+        filteredItems: this.filterTiles(section.items),
+      }));
     },
     /* Updates layout (when button clicked), and saves in local storage */
     layoutOrientation() {
@@ -152,7 +151,7 @@ export default {
     findSingleSection: (allSections, sectionTitle) => {
       if (!sectionTitle) return undefined;
       let sectionToReturn;
-      const parse = (section) => section.replaceAll(' ', '-').toLowerCase().trim();
+      const parse = (section) => section.replace(/\s+/g, '-').toLowerCase().trim();
       allSections.forEach((section) => {
         if (parse(sectionTitle) === parse(section.name || '')) {
           sectionToReturn = [section];
@@ -163,21 +162,21 @@ export default {
     },
     /* Returns an array of links to external CSS from the Config */
     getExternalCSSLinks() {
-      const availibleThemes = {};
+      const availableThemes = {};
       if (this.appConfig) {
         if (this.appConfig.externalStyleSheet) {
           const externals = this.appConfig.externalStyleSheet;
           if (Array.isArray(externals)) {
             externals.forEach((ext, i) => {
-              availibleThemes[`External Stylesheet ${i + 1}`] = ext;
+              availableThemes[`External Stylesheet ${i + 1}`] = ext;
             });
           } else {
-            availibleThemes['External Stylesheet'] = this.appConfig.externalStyleSheet;
+            availableThemes['External Stylesheet'] = this.appConfig.externalStyleSheet;
           }
         }
       }
-      availibleThemes.Default = '#';
-      return availibleThemes;
+      availableThemes.Default = '#';
+      return availableThemes;
     },
   },
   mounted() {

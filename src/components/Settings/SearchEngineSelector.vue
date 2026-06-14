@@ -4,7 +4,8 @@
       <button
         v-for="engine in searchEngines"
         :key="engine.key"
-        :class="['engine-btn', {active: currentEngine === engine.key }]"
+        type="button"
+        :class="['engine-btn', { active: currentEngine === engine.key }]"
         @click="selectEngine(engine.key)"
       >
         {{ engine.name }}
@@ -14,10 +15,11 @@
       <input
         v-model="searchQuery"
         :placeholder="`${currentEngineName} 搜索...`"
-        @keydown.enter="performSearch"
         class="search-input"
+        @keydown.stop
+        @keydown.enter.prevent="performSearch"
       />
-      <button @click="performSearch" class="search-btn">
+      <button type="button" @click="performSearch" class="search-btn" aria-label="搜索">
         <svg
           width="24"
           height="24"
@@ -64,10 +66,12 @@ export default {
       this.currentEngine = engineKey;
     },
     performSearch() {
-      if (this.searchQuery.trim()) {
-        const searchUrl = this.currentEngineUrl + encodeURIComponent(this.searchQuery);
-        window.open(searchUrl, '_blank');
-      }
+      const query = this.searchQuery.trim();
+      if (!query) return;
+
+      const searchUrl = this.currentEngineUrl + encodeURIComponent(query);
+      const openedWindow = window.open(searchUrl, '_blank', 'noopener,noreferrer');
+      if (openedWindow) openedWindow.opener = null;
     },
   },
 };

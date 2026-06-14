@@ -118,13 +118,18 @@ export default {
     window.removeEventListener('keydown', this.handleKeyPress);
   },
   methods: {
-    /* Call correct function dependending on which key is pressed */
+    /* Call correct function depending on which key is pressed */
     handleKeyPress(event) {
-      const currentElem = document.activeElement.id;
+      const { activeElement } = document;
+      const currentElem = activeElement?.id;
+      const targetTag = (event.target?.tagName || '').toLowerCase();
+      const isTypingInField = ['input', 'textarea', 'select'].includes(targetTag)
+        || event.target?.isContentEditable;
       const { key, keyCode } = event;
       const notAlreadySearching = currentElem !== 'filter-tiles';
       // If a modal is open, then do nothing
       if (!this.active) return;
+      if (isTypingInField && notAlreadySearching) return;
       if (/^[/:!a-zA-Z]$/.test(key) && notAlreadySearching) {
         // Letter or bang key pressed - start searching
         if (this.$refs.filter) this.$refs.filter.focus();
@@ -147,8 +152,8 @@ export default {
     /* Resets everything to initial state, when user is finished */
     clearFilterInput() {
       this.input = ''; // Clear input model
-      this.userIsTypingSomething(); // Emmit new empty value
-      document.activeElement.blur(); // Remove focus
+      this.userIsTypingSomething(); // Emit new empty value
+      if (document.activeElement) document.activeElement.blur(); // Remove focus
       this.akn.resetIndex(); // Reset current element index
     },
     /* If configured, launch specific app when hotkey pressed */

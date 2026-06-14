@@ -15,7 +15,7 @@ export const makePageName = (pageName) => {
   if (!pageName) return 'unnamed-page';
   return pageName
     .toLowerCase()
-    .replaceAll(' ', '-')
+    .replace(/\s+/g, '-')
     .replace('.yml', '')
     .replace(/[^\w\s-]/gi, '');
 };
@@ -28,6 +28,7 @@ export const makePageSlug = (pageName, pageType) => {
 
 /* Put fetch path for additional configs in correct format */
 export const formatConfigPath = (configPath) => {
+  if (!configPath) return undefined;
   if (configPath.includes('http')) return configPath;
   if (configPath.substring(0, 1) !== '/') return `/${configPath}`;
   return configPath;

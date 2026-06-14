@@ -427,7 +427,8 @@ const store = new Vuex.Store({
           commit(CRITICAL_ERROR_MSG, `Unable to find config for '${subConfigId}'`);
           return { ...emptyConfig };
         }
-        axios.get(subConfigPath, makeBasicAuthHeaders()).then((response) => {
+        try {
+          const response = await axios.get(subConfigPath, makeBasicAuthHeaders());
           // Parse the YAML
           const configContent = yaml.load(response.data) || {};
           // Certain values must be inherited from root config
@@ -452,11 +453,12 @@ const store = new Vuex.Store({
           // Set the config
           commit(SET_CONFIG, configContent);
           commit(SET_CURRENT_CONFIG_INFO, { confPath: subConfigPath, confId: subConfigId });
-        }).catch((err) => {
-          commit(CRITICAL_ERROR_MSG, `Unable to load config from '${subConfigPath}'`, err);
-        });
+          return configContent;
+        } catch (err) {
+          commit(CRITICAL_ERROR_MSG, `Unable to load config from '${subConfigPath}': ${err.message}`);
+          return { ...emptyConfig };
+        }
       }
-      return { ...emptyConfig };
     },
   },
   modules: {},
