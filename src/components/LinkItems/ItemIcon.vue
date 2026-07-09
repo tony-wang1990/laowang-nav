@@ -32,7 +32,7 @@ import ErrorHandler from '@/utils/ErrorHandler';
 import EmojiUnicodeRegex from '@/utils/EmojiUnicodeRegex';
 import emojiLookup from '@/utils/emojis.json';
 import {
-  faviconApi as defaultFaviconApi, faviconApiEndpoints, iconCdns,
+  faviconApi as defaultFaviconApi, faviconApiEndpoints, faviconFallbackChain, iconCdns,
 } from '@/utils/defaults';
 
 export default {
@@ -133,16 +133,18 @@ export default {
     /* Return the path to icon asset, depending on icon type */
     getIconPath(img, url, fallbackStage = this.fallbackStage) {
       const type = this.determineImageType(img);
-      const shouldAutoFetch = type === 'favicon' || type === 'auto-fetch';
 
-      if (shouldAutoFetch) {
-        if (!url || !url.includes('http')) return '';
-        const api = this.faviconFallbackApis[fallbackStage];
-        return api ? this.getFavicon(url, api) : '';
+      if (this.isAutoFaviconType(type)) {
+        return this.getFallbackFaviconPath(url, fallbackStage);
       }
 
-      // Explicit icon failed once, so use the guaranteed inline fallback.
-      if (fallbackStage > 0) return '';
+      // If an explicit icon fails, fall back to the target site's favicon chain.
+      if (fallbackStage > 0) {
+        if (this.canFallbackToFavicon(type)) {
+          return this.getFallbackFaviconPath(url, fallbackStage - 1);
+        }
+        return '';
+      }
 
       switch (type) {
         case 'url': return img;
@@ -173,9 +175,9 @@ export default {
     /* Returns true if the input is a path to an image file */
     isImage(img) {
       const fileExtRegex = /(?:\.([^.]+))?$/;
-      const validImgExtensions = ['svg', 'png', 'jpg'];
+      const validImgExtensions = ['svg', 'png', 'jpg', 'jpeg', 'webp', 'ico', 'gif', 'avif'];
       const splitPath = fileExtRegex.exec(img);
-      if (splitPath.length >= 1) return validImgExtensions.includes(splitPath[1]);
+      if (splitPath.length >= 1) return validImgExtensions.includes((splitPath[1] || '').toLowerCase());
       return false;
     },
     /* Determines if a given string is an emoji, and if so what type it is */
@@ -206,6 +208,10 @@ export default {
       const fullUrlTrue = fullUrl || '';
       const faviconApi = specificApi || this.appConfig.faviconApi || defaultFaviconApi;
 
+      if (faviconApi === 'local') {
+        return this.getDirectFavicon(fullUrlTrue);
+      }
+
       if (specificApi) {
         const host = this.safeHostname(fullUrlTrue);
         const endpoint = faviconApiEndpoints[specificApi];
@@ -213,9 +219,8 @@ export default {
       }
 
       if (this.shouldUseDefaultFavicon(fullUrlTrue) || faviconApi === 'local') {
-        const urlParts = fullUrlTrue.split('/');
-        if (urlParts.length >= 2) return `${urlParts[0]}/${urlParts[1]}/${urlParts[2]}/${iconCdns.faviconName}`;
-      } else if (fullUrlTrue.includes('http')) {
+        return this.getDirectFavicon(fullUrlTrue);
+      } else if (this.normalizeUrl(fullUrlTrue).includes('http')) {
         const host = this.safeHostname(fullUrlTrue);
         const endpoint = faviconApiEndpoints[faviconApi];
         if (endpoint) return endpoint.replace('$URL', host);
@@ -244,11 +249,29 @@ export default {
     getLocalImagePath(img) {
       return `/${iconCdns.localPath}/${img}`;
     },
+    normalizeUrl(url) {
+      if (!url || typeof url !== 'string') return '';
+      const trimmed = url.trim();
+      if (/^https?:\/\//i.test(trimmed)) return trimmed;
+      if (/^(localhost|(\d{1,3}\.){3}\d{1,3}|\[[a-f0-9:]+\]|[a-f0-9:]+)(:\d+)?(\/|$)/i.test(trimmed)
+        || trimmed.includes('.')) {
+        return `https://${trimmed}`;
+      }
+      return trimmed;
+    },
+    getDirectFavicon(url) {
+      try {
+        const parsedUrl = new URL(this.normalizeUrl(url));
+        return `${parsedUrl.origin}/${iconCdns.faviconName}`;
+      } catch (e) {
+        return '';
+      }
+    },
     /* Safely extract hostname from a URL string */
     safeHostname(url) {
       if (!url) return 'W';
       try {
-        return new URL(url).hostname || url;
+        return new URL(this.normalizeUrl(url)).hostname || url;
       } catch (e) {
         return url;
       }
@@ -309,6 +332,7 @@ export default {
     scheduleImageFallback() {
       this.clearImageFallbackTimer();
       if (!this.iconPath) return;
+      if (!this.shouldScheduleImageFallback()) return;
       this.$nextTick(() => {
         const img = this.$refs.iconImg;
         if (!img || (img.complete && img.naturalWidth >= 2 && img.naturalHeight >= 2)) return;
@@ -319,19 +343,54 @@ export default {
             || currentImg.naturalHeight < 2)) {
             this.imageNotFound();
           }
-        }, 1800);
+        }, this.getFallbackTimeout());
       });
+    },
+    shouldScheduleImageFallback() {
+      const type = this.determineImageType(this.effectiveIcon);
+      return this.fallbackStage > 0 || this.isAutoFaviconType(type);
+    },
+    getFallbackTimeout() {
+      const type = this.determineImageType(this.effectiveIcon);
+      return this.fallbackStage === 0 && this.isAutoFaviconType(type) ? 2200 : 1800;
+    },
+    isAutoFaviconType(type) {
+      return type === 'favicon' || type === 'auto-fetch';
+    },
+    canFallbackToFavicon(type) {
+      return [
+        'url',
+        'img',
+        'simple-icons',
+        'home-lab-icons',
+        'selfhst-icons',
+        'custom-favicon',
+      ].includes(type);
+    },
+    getFallbackFaviconPath(url, stage) {
+      const api = this.getFaviconFallbackApisForUrl(url)[stage];
+      return api ? this.getFavicon(url, api) : '';
+    },
+    getFaviconFallbackApisForUrl(url) {
+      const localFirst = this.shouldUseDefaultFavicon(url);
+      const orderedApis = localFirst ? ['local', ...this.faviconFallbackApis] : this.faviconFallbackApis;
+      return [...new Set(orderedApis)];
     },
     getOrderedFaviconApis() {
       const configuredApi = this.appConfig.faviconApi || defaultFaviconApi;
       const preferredApis = [
         configuredApi,
-        'google',
+        'allesedv',
+        'local',
+        ...(faviconFallbackChain.domestic || []),
         'duckduckgo',
         'faviconkit',
         'iconhorse',
+        'unavatar',
+        'google',
+        'clearbit',
       ];
-      return [...new Set(preferredApis)].filter(api => faviconApiEndpoints[api]);
+      return [...new Set(preferredApis)].filter(api => api === 'local' || faviconApiEndpoints[api]);
     },
     /* Some favicon APIs return a successful but empty image. Treat it as a miss. */
     imageLoaded(event) {
@@ -345,12 +404,15 @@ export default {
     imageNotFound() {
       this.clearImageFallbackTimer();
       const type = this.determineImageType(this.effectiveIcon);
-      if (type === 'favicon' || type === 'auto-fetch') {
-        const nextStage = this.fallbackStage + 1;
-        if (nextStage < this.faviconFallbackApis.length) {
-          this.fallbackStage = nextStage;
-          return;
-        }
+      const nextStage = this.fallbackStage + 1;
+      const maxStage = this.isAutoFaviconType(type)
+        ? this.getFaviconFallbackApisForUrl(this.url).length - 1
+        : this.getFaviconFallbackApisForUrl(this.url).length;
+      const canTryNextFallback = this.isAutoFaviconType(type) || this.canFallbackToFavicon(type);
+
+      if (canTryNextFallback && nextStage <= maxStage) {
+        this.fallbackStage = nextStage;
+        return;
       }
       this.fallbackStage = Number.MAX_SAFE_INTEGER;
     },

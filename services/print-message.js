@@ -17,7 +17,7 @@ module.exports = (ip, port, isDocker) => {
     BR: '\n',
   };
   // Functions to insert string of set length of characters
-  const printChars = (count, char) => new Array(count).fill(char).join('');
+  const printChars = (count, char) => new Array(Math.max(0, Math.floor(count))).fill(char).join('');
   const stars = (count) => printChars(count, '*');
   const line = (count) => printChars(count, '━');
   const blanks = (count) => printChars(count, ' ');

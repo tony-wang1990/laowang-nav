@@ -40,6 +40,7 @@ module.exports = {
   serviceEndpoints: {
     statusPing: '/status-ping',
     statusCheck: '/status-check',
+    linkHealthCheck: '/link-health-check',
     save: '/config-manager/save',
     rebuild: '/config-manager/rebuild',
     systemInfo: '/system-info',

@@ -138,7 +138,6 @@ sections:
         icon: https://wy-static.wenxiaobai.com/wenxiaobai-web/production/3.12.14/_next/static/media/new_favicon.6d31cfe4.png
         url: https://www.wenxiaobai.com/chat
       - title: Genspark
-        icon: https://www.genspark.ai/agents?type=moa_chat/favicon.ico
         url: https://www.genspark.ai/agents?type=moa_chat
       - title: AkashChat
         icon: https://chat.akash.network/favicon.ico
@@ -202,7 +201,6 @@ sections:
         icon: https://cursor.com/favicon.ico
         url: https://cursor.com
       - title: Ai一键换脸
-        icon: https://imgai.ai/zh/favicon.ico
         url: https://imgai.ai/zh
       - title: Aippt
         icon: https://www.aippt.cn/_nuxt/highlight-2.Bb1q-DtW.webp
@@ -371,7 +369,6 @@ sections:
         url: https://www.ct8.pl
       - title: Claw
         description: 免费容器(半年以上的github账户每月免费5$)
-        icon: https://console.run.claw.cloud/signin?link=FZHSTH7HEBTU/favicon.ico
         url: https://console.run.claw.cloud/signin?link=FZHSTH7HEBTU
       - title: Cloudcat
         description: Claw同款免费容器(每月免费5$)
@@ -554,7 +551,6 @@ sections:
         url: https://www.everauto.net
       - title: incogniton
         description: 指纹浏览器(10个免费环境)
-        icon: https://incogniton.com/zh-hans/favicon.ico
         url: https://incogniton.com/zh-hans
       - title: 云萌Win10/11激活
         description: windows系统激活工具
@@ -732,7 +728,6 @@ sections:
         url: https://www.json.cn
       - title: 文件格式转换
         description: 超300种文件格式转换
-        icon: https://convertio.co/zh/favicon.ico
         url: https://convertio.co/zh
       - title: 视频在线下载
         description: 在线视频解析下载
@@ -744,7 +739,6 @@ sections:
         url: https://it.idev.dev
       - title: emoji大全
         description: 各类目emoji
-        icon: https://www.iamwawa.cn/emoji.html/favicon.ico
         url: https://www.iamwawa.cn/emoji.html
       - title: 信用卡生成
         description: 信用卡生成器
@@ -775,7 +769,6 @@ sections:
         url: https://dnsleaktest.com
       - title: Deobfuscator
         description: JS反混淆
-        icon: https://dev-coco.github.io/Online-Tools/JavaScript-Deobfuscator.html/favicon.ico
         url: https://dev-coco.github.io/Online-Tools/JavaScript-Deobfuscator.html
       - title: flexclip
         icon: https://www.flexclip.com/cn/ai/favicon.ico
@@ -788,7 +781,6 @@ sections:
         icon: https://blackace.app/imgs/favicon.ico
         url: https://blackace.app
       - title: PHP混淆加密
-        icon: https://www.toolnb.com/tools/phpcarbylamine.html/favicon.ico
         url: https://www.toolnb.com/tools/phpcarbylamine.html
       - title: 中文转码
         icon: https://www.bchrt.com/tools/punycode-encoder/favicon.ico
@@ -802,13 +794,11 @@ sections:
         icon: https://www.freereceivesms.com/favicon.ico
         url: https://www.freereceivesms.com
       - title: sms24
-        icon: https://sms24.me/en/favicon.ico
         url: https://sms24.me/en
       - title: onlinesim
         icon: https://onlinesim.io/ru/free_numbers/favicon.ico
         url: https://onlinesim.io/ru/free_numbers
       - title: smsonline
-        icon: https://www.smsonline.cloud/zh/favicon.ico
         url: https://www.smsonline.cloud/zh
       - title: receive-sms
         icon: https://wetalkapp.com/receive-sms/favicon.ico
@@ -824,7 +814,6 @@ sections:
         icon: https://lubansms.com/img/apple-touch-icon.png
         url: https://lubansms.com/receiveSms
       - title: 7sim
-        icon: http://7sim.net/favicon.ico
         url: http://7sim.net
       - title: receiveasms
         icon: https://www.receiveasms.com/favicon.ico
@@ -862,7 +851,6 @@ sections:
         icon: https://sms-japan.com/static/smsjapan/images/favicon.png
         url: https://sms-japan.com
       - title: online-sim
-        icon: https://online-sim.pro/zh/favicon.ico
         url: https://online-sim.pro/zh
       - title: temp-number
         icon: https://temp-number.com/favicon.ico
@@ -935,7 +923,6 @@ sections:
         icon: https://tempmail.edu.kg/favicon.ico
         url: https://tempmail.edu.kg
       - title: Tempmail
-        icon: https://tempmail.plus/zh/favicon.ico
         url: https://tempmail.plus/zh/
       - title: 临时邮箱
         icon: https://22.do/assets/images/logo.png

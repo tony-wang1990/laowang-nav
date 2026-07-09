@@ -19,21 +19,21 @@
     "build-and-start": "cross-env NODE_OPTIONS=--openssl-legacy-provider npm-run-all --parallel build start",
     "validate-config": "node services/config-validator",
     "health-check": "node services/healthcheck",
-    "dependency-audit": "npm audit --production"
+    "dependency-audit": "npm audit --omit=dev"
   },
   "dependencies": {
-    "@babel/core": "^7.0.0",
+    "@babel/core": "^7.29.7",
     "@formschema/native": "^2.0.0-beta.6",
-    "@sentry/tracing": "^7.102.1",
-    "@sentry/vue": "^7.102.1",
-    "ajv": "^8.10.0",
-    "axios": "^1.12.0",
+    "@sentry/tracing": "^7.120.4",
+    "@sentry/vue": "^7.120.4",
+    "ajv": "^8.20.0",
+    "axios": "^1.18.1",
     "connect-history-api-fallback": "^1.6.0",
     "crypto-js": "^4.2.0",
-    "express": "^4.17.2",
+    "express": "^4.22.2",
     "express-basic-auth": "^1.2.1",
     "frappe-charts": "^1.6.2",
-    "js-yaml": "^4.1.0",
+    "js-yaml": "^5.2.1",
     "keycloak-js": "^20.0.3",
     "oidc-client-ts": "^3.0.1",
     "register-service-worker": "^1.7.2",
@@ -55,7 +55,7 @@
     "vuex": "^3.6.2"
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.17.10",
+    "@babel/preset-env": "^7.29.7",
     "@vue/cli-plugin-babel": "^4.5.15",
     "@vue/cli-plugin-eslint": "^4.5.15",
     "@vue/cli-plugin-pwa": "^4.5.15",
@@ -69,6 +69,7 @@
     "eslint-config-airbnb": "^18.0.1",
     "eslint-plugin-vue": "^7.9.0",
     "npm-run-all": "^4.1.5",
+    "postcss": "^7.0.39",
     "sass": "^1.38.0",
     "sass-loader": "^7.1.0",
     "typescript": "^5.4.4",
@@ -115,5 +116,13 @@
   "browserslist": [
     "> 1%",
     "last 2 versions"
-  ]
+  ],
+  "overrides": {
+    "@babel/runtime": "^7.29.7",
+    "lodash": "^4.18.1",
+    "nanoid": "^3.3.15",
+    "jsoneditor": {
+      "ajv": "^6.15.0"
+    }
+  }
 }

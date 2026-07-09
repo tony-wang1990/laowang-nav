@@ -85,6 +85,7 @@ config = require('./services/config-validator');
 /* Include route handlers for API endpoints */
 // Used by the status check feature, uses GET
 const statusCheck = require('./services/status-check');
+const linkHealthCheck = require('./services/link-health-check');
 const saveConfig = require('./services/save-config'); // Saves users new conf.yml to file-system
 const rebuild = require('./services/rebuild-app'); // A script to programmatically trigger a build
 const systemInfo = require('./services/system-info'); // Basic system info, for resource widget
@@ -209,6 +210,17 @@ const app = express()
       printWarning(`Error running status check for ${req.url}\n`, e);
     }
   })
+  // POST endpoint to run bulk link health checks from the config editor
+  .use(ENDPOINTS.linkHealthCheck, method('POST', async (req, res) => {
+    try {
+      const results = await linkHealthCheck(req.body);
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify(results));
+    } catch (e) {
+      printWarning('Error running link health check', e);
+      res.status(500).end(JSON.stringify({ success: false, message: e.message }));
+    }
+  }))
   // POST Endpoint used to save config, by writing config file to disk
   .use(ENDPOINTS.save, method('POST', (req, res) => {
     try {

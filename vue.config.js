@@ -49,9 +49,18 @@ const plugins = !isServer ? [
 
 // Webpack Config
 const configureWebpack = {
-  devtool: 'source-map',
+  devtool: mode === 'production' ? false : 'source-map',
   mode,
   plugins,
+  resolve: {
+    alias: {
+      'js-yaml$': path.join(
+        path.dirname(require.resolve('js-yaml/package.json')),
+        'dist',
+        'js-yaml.cjs.js',
+      ),
+    },
+  },
   module: {
     rules: [
       { test: /.svg$/, loader: 'vue-svg-loader' },
@@ -65,6 +74,39 @@ const configureWebpack = {
   performance: {
     maxEntrypointSize: 10000000,
     maxAssetSize: 10000000,
+  },
+  optimization: {
+    splitChunks: {
+      chunks: 'all',
+      maxInitialRequests: 10,
+      maxAsyncRequests: 10,
+      cacheGroups: {
+        framework: {
+          test: /[\\/]node_modules[\\/](vue|vue-router|vuex|vue-i18n)[\\/]/,
+          name: 'chunk-framework',
+          priority: 40,
+          enforce: true,
+        },
+        editor: {
+          test: /[\\/]node_modules[\\/](v-jsoneditor|jsoneditor|ace-builds)[\\/]/,
+          name: 'chunk-editor',
+          priority: 30,
+          enforce: true,
+        },
+        charts: {
+          test: /[\\/]node_modules[\\/](frappe-charts|chart.js|apexcharts)[\\/]/,
+          name: 'chunk-charts',
+          priority: 25,
+          enforce: true,
+        },
+        vendors: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'chunk-vendors',
+          priority: 10,
+          reuseExistingChunk: true,
+        },
+      },
+    },
   },
 };
 
@@ -90,6 +132,7 @@ const pages = {
 module.exports = {
   lintOnSave: false,
   parallel: false,
+  productionSourceMap: false,
   publicPath,
   pwa,
   integrity,

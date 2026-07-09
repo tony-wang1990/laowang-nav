@@ -30,6 +30,16 @@
             {{backupId ? $t('config.edit-cloud-sync-button') : $t('config.cloud-sync-button') }}
             <CloudIcon class="button-icon"/>
           </Button>
+          <!-- Icon health button -->
+          <Button class="config-button" :disallow="!enableConfig" :click="openIconHealthTab">
+            图标健康检查
+            <IconHealthIcon class="button-icon"/>
+          </Button>
+          <!-- Link health button -->
+          <Button class="config-button" :disallow="!enableConfig" :click="openLinkHealthTab">
+            链接健康面板
+            <LinkHealthIcon class="button-icon"/>
+          </Button>
           <!-- Rebuild app button -->
           <Button class="config-button" :disallow="!enableConfig" :click="openRebuildAppModal">
             {{ $t('config.rebuild-app-button') }}
@@ -73,6 +83,12 @@
     <TabItem :name="$t('config.custom-css-tab')" v-if="enableConfig">
       <CustomCssEditor />
     </TabItem>
+    <TabItem name="图标健康检查" v-if="enableConfig">
+      <IconHealthPanel :config="config" />
+    </TabItem>
+    <TabItem name="链接健康面板" v-if="enableConfig">
+      <LinkHealthPanel :config="config" />
+    </TabItem>
   </Tabs>
 </template>
 
@@ -85,6 +101,8 @@ import StoreKeys from '@/utils/StoreMutations';
 import JsonEditor from '@/components/Configuration/JsonEditor';
 import CustomCssEditor from '@/components/Configuration/CustomCss';
 import CloudBackupRestore from '@/components/Configuration/CloudBackupRestore';
+import IconHealthPanel from '@/components/Configuration/IconHealthPanel';
+import LinkHealthPanel from '@/components/Configuration/LinkHealthPanel';
 import RebuildApp from '@/components/Configuration/RebuildApp';
 import AppVersion from '@/components/Configuration/AppVersion';
 import Button from '@/components/FormElements/Button';
@@ -97,6 +115,8 @@ import CloudIcon from '@/assets/interface-icons/cloud-backup-restore.svg';
 import RebuildIcon from '@/assets/interface-icons/application-rebuild.svg';
 import LanguageIcon from '@/assets/interface-icons/config-language.svg';
 import IconAbout from '@/assets/interface-icons/application-about.svg';
+import IconHealthIcon from '@/assets/interface-icons/broken-icon.svg';
+import LinkHealthIcon from '@/assets/interface-icons/widget-update.svg';
 
 export default {
   name: 'ConfigContainer',
@@ -128,6 +148,8 @@ export default {
     JsonEditor,
     CustomCssEditor,
     CloudBackupRestore,
+    IconHealthPanel,
+    LinkHealthPanel,
     RebuildApp,
     AppVersion,
     DownloadIcon,
@@ -138,6 +160,8 @@ export default {
     LanguageIcon,
     RebuildIcon,
     IconAbout,
+    IconHealthIcon,
+    LinkHealthIcon,
   },
   methods: {
     /* Progamatically navigates to a given tab by index */
@@ -173,6 +197,12 @@ export default {
     },
     openEditCssTab() {
       this.navigateToTab(3);
+    },
+    openIconHealthTab() {
+      this.navigateToTab(4);
+    },
+    openLinkHealthTab() {
+      this.navigateToTab(5);
     },
     /* Checks that the user is sure, then resets site-wide local storage, and reloads page */
     resetLocalSettings() {
