@@ -11,12 +11,12 @@
   "description": "A modern, responsive, and highly customizable dashboard for your personal server. Built for you by LaoWang.",
   "scripts": {
     "start": "node server",
-    "dev": "cross-env NODE_OPTIONS=--openssl-legacy-provider vue-cli-service serve",
-    "build": "cross-env NODE_OPTIONS=--openssl-legacy-provider vue-cli-service build --no-module",
+    "dev": "cross-env NODE_OPTIONS=\"--openssl-legacy-provider --require ./scripts/node-crypto-polyfill.js\" vue-cli-service serve",
+    "build": "cross-env NODE_OPTIONS=\"--openssl-legacy-provider --require ./scripts/node-crypto-polyfill.js\" vue-cli-service build --no-module",
     "lint": "eslint \"src/**/*.{js,vue}\" \"tests/**/*.js\"",
     "pm2-start": "npx pm2 start server.js",
-    "build-watch": "vue-cli-service build --watch --mode production --no-module",
-    "build-and-start": "cross-env NODE_OPTIONS=--openssl-legacy-provider npm-run-all --parallel build start",
+    "build-watch": "cross-env NODE_OPTIONS=\"--openssl-legacy-provider --require ./scripts/node-crypto-polyfill.js\" vue-cli-service build --watch --mode production --no-module",
+    "build-and-start": "cross-env NODE_OPTIONS=\"--openssl-legacy-provider --require ./scripts/node-crypto-polyfill.js\" npm-run-all --parallel build start",
     "validate-config": "node services/config-validator",
     "health-check": "node services/healthcheck",
     "dependency-audit": "npm audit --omit=dev"
