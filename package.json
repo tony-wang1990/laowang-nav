@@ -12,10 +12,10 @@
   "scripts": {
     "start": "node server",
     "dev": "cross-env NODE_OPTIONS=--openssl-legacy-provider vue-cli-service serve",
-    "build": "cross-env NODE_OPTIONS=--openssl-legacy-provider vue-cli-service build",
-    "lint": "vue-cli-service lint",
+    "build": "cross-env NODE_OPTIONS=--openssl-legacy-provider vue-cli-service build --no-module",
+    "lint": "eslint \"src/**/*.{js,vue}\" \"tests/**/*.js\"",
     "pm2-start": "npx pm2 start server.js",
-    "build-watch": "vue-cli-service build --watch --mode production",
+    "build-watch": "vue-cli-service build --watch --mode production --no-module",
     "build-and-start": "cross-env NODE_OPTIONS=--openssl-legacy-provider npm-run-all --parallel build start",
     "validate-config": "node services/config-validator",
     "health-check": "node services/healthcheck",
@@ -56,29 +56,29 @@
   },
   "devDependencies": {
     "@babel/preset-env": "^7.29.7",
-    "@vue/cli-plugin-babel": "^4.5.15",
-    "@vue/cli-plugin-eslint": "^4.5.15",
-    "@vue/cli-plugin-pwa": "^4.5.15",
-    "@vue/cli-plugin-typescript": "^5.0.8",
-    "@vue/cli-service": "^4.5.19",
-    "@vue/eslint-config-standard": "^4.0.0",
-    "babel-eslint": "^10.0.1",
-    "copy-webpack-plugin": "6.4.0",
-    "cross-env": "^10.1.0",
-    "eslint": "^6.8.0",
-    "eslint-config-airbnb": "^18.0.1",
-    "eslint-plugin-vue": "^7.9.0",
+    "@babel/eslint-parser": "^7.29.7",
+    "@vue/cli-plugin-babel": "^5.0.9",
+    "@vue/cli-plugin-pwa": "^5.0.9",
+    "@vue/cli-service": "^5.0.9",
+    "@vue/eslint-config-standard": "^8.0.1",
+    "copy-webpack-plugin": "^14.0.0",
+    "cross-env": "^7.0.3",
+    "eslint": "^8.57.1",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-n": "^16.6.2",
+    "eslint-plugin-promise": "^6.6.0",
+    "eslint-plugin-vue": "^9.33.0",
     "npm-run-all": "^4.1.5",
-    "postcss": "^7.0.39",
+    "postcss": "^8.5.16",
     "sass": "^1.38.0",
-    "sass-loader": "^7.1.0",
-    "typescript": "^5.4.4",
+    "sass-loader": "^10.5.2",
     "vue-cli-plugin-yaml": "^1.0.2",
-    "vue-svg-loader": "^0.16.0",
+    "vue-svg-loader": "0.12.0",
     "vue-template-compiler": "^2.7.0"
   },
   "engines": {
-    "node": ">=16.0.0 <21.6.2"
+    "node": ">=18.12.0 <21.6.2"
   },
   "eslintConfig": {
     "root": true,
@@ -96,10 +96,14 @@
       "import/no-unresolved": "off",
       "import/extensions": "off",
       "arrow-parens": 0,
-      "no-else-return": 0
+      "no-else-return": 0,
+      "function-paren-newline": "off",
+      "prefer-regex-literals": "off",
+      "vue/multi-word-component-names": "off",
+      "vue/no-reserved-component-names": "off"
     },
     "parserOptions": {
-      "parser": "babel-eslint"
+      "parser": "@babel/eslint-parser"
     }
   },
   "babel": {
@@ -121,6 +125,11 @@
     "@babel/runtime": "^7.29.7",
     "lodash": "^4.18.1",
     "nanoid": "^3.3.15",
+    "nth-check": "^2.1.1",
+    "postcss": "^8.5.16",
+    "serialize-javascript": "^7.0.5",
+    "uuid": "^11.1.1",
+    "webpack-dev-server": "^5.2.5",
     "jsoneditor": {
       "ajv": "^6.15.0"
     }

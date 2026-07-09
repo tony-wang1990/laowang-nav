@@ -59,16 +59,16 @@ const configureWebpack = {
         'dist',
         'js-yaml.cjs.js',
       ),
+      'rss-parser$': path.join(
+        path.dirname(require.resolve('rss-parser/package.json')),
+        'dist',
+        'rss-parser.min.js',
+      ),
     },
   },
   module: {
     rules: [
       { test: /.svg$/, loader: 'vue-svg-loader' },
-      {
-        test: /\.tsx?$/,
-        loader: 'ts-loader',
-        options: { appendTsSuffixTo: [/\.vue$/] },
-      },
     ],
   },
   performance: {
@@ -112,17 +112,19 @@ const configureWebpack = {
 
 // Development server config
 const devServer = {
-  contentBase: [
-    path.join(__dirname, 'public'),
-    path.join(__dirname, process.env.USER_DATA_DIR || 'user-data'),
-  ],
-  watchContentBase: true,
-  publicPath: '/',
+  setupMiddlewares: (middlewares, devServerInstance) => {
+    if (devServerInstance && devServerInstance.app) {
+      const express = require('express');
+      const userDataDir = path.join(__dirname, process.env.USER_DATA_DIR || 'user-data');
+      devServerInstance.app.use(express.static(userDataDir));
+    }
+    return middlewares;
+  },
 };
 
 // Application pages
 const pages = {
-  laowang: {
+  index: {
     entry: 'src/main.js',
     filename: 'index.html',
   },
@@ -130,6 +132,15 @@ const pages = {
 
 // Export the main Vue app config
 module.exports = {
+  css: {
+    loaderOptions: {
+      css: {
+        url: {
+          filter: url => !url.startsWith('/fonts/') && !url.startsWith('/widget-resources/'),
+        },
+      },
+    },
+  },
   lintOnSave: false,
   parallel: false,
   productionSourceMap: false,
