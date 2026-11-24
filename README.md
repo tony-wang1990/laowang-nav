@@ -363,6 +363,8 @@ docker restart laowang-nav
 
 本项目基于 [Dashy](https://github.com/Lissy93/dashy) 二次开发，增加了中文本地化、默认配置、部署脚本、图标和链接健康检查等增强能力。感谢原作者和开源社区的工作。
 
+本项目也在 [LINUX DO](https://linux.do/) 社区分享，感谢社区朋友们的交流与反馈。
+
 ---
 
 ## 许可证
