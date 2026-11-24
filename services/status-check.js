@@ -5,6 +5,16 @@
  */
 const axios = require('axios').default;
 const https = require('https');
+const { assertHostAllowed } = require('./ssrf-guard');
+
+/* Fallback redirect cap when the caller does not pass a numeric maxRedirects */
+const DEFAULT_MAX_REDIRECTS = 5;
+
+const parseMaxRedirects = (value) => {
+  const parsed = parseInt(value, 10);
+  if (Number.isNaN(parsed) || parsed < 0) return DEFAULT_MAX_REDIRECTS;
+  return Math.min(parsed, 10);
+};
 
 /* Determines if successful from the HTTP response code */
 const getResponseType = (code, validCodes) => {
@@ -27,57 +37,118 @@ const makeErrorMessage = (data) => `❌ Service Unavailable: ${data.hostname || 
 const makeErrorMessage2 = (data) => '❌ Service Error - '
   + `${data.status} - ${data.statusText}`;
 
-/* Kicks of a HTTP request, then formats and renders results */
-const makeRequest = (url, options, render) => {
+/* Kicks off an HTTP request, then formats and renders results.
+ * SSRF guard: the target of every hop (initial URL and each redirect) is
+ * validated with assertHostAllowed before the request is made, so a public
+ * URL that redirects to a private / loopback / link-local address is
+ * rejected instead of followed. Redirects are therefore followed by
+ * recursion (maxRedirects: 0 + validateStatus accepting all statuses)
+ * instead of letting axios follow them unchecked. Private targets are
+ * rejected unless NAV_ALLOW_PRIVATE_TARGETS=1 (see README "安全说明"). */
+const makeRequest = async (url, options, render) => {
   const {
     headers, enableInsecure, acceptCodes, maxRedirects,
   } = options;
   const validCodes = acceptCodes && acceptCodes !== 'null' ? acceptCodes : null;
+  const maxHops = parseMaxRedirects(maxRedirects);
   const startTime = new Date();
   const requestMaker = axios.create({
     httpsAgent: new https.Agent({
       rejectUnauthorized: !enableInsecure,
     }),
   });
-  requestMaker.request({
-    url,
-    headers,
-    maxRedirects,
-  })
-    .then((response) => {
-      const statusCode = response.status;
-      const { statusText } = response;
-      const successStatus = getResponseType(statusCode, validCodes);
-      const serverName = response.request.socket.servername;
-      const timeTaken = (new Date() - startTime);
+
+  // One hop: validate the target, then request it. Returns a result object
+  // describing what happened, so the caller can render it exactly once.
+  const fetchHop = async (currentUrl, hops) => {
+    let parsed;
+    try {
+      parsed = new URL(currentUrl);
+    } catch (e) {
+      return { kind: 'blocked', reason: 'Invalid URL' };
+    }
+    if (!['http:', 'https:'].includes(parsed.protocol)) {
+      return { kind: 'blocked', reason: 'Only http and https URLs are allowed' };
+    }
+    try {
+      await assertHostAllowed(parsed.hostname);
+    } catch (e) {
+      return { kind: 'blocked', reason: e.message };
+    }
+
+    let response;
+    try {
+      response = await requestMaker.request({
+        url: currentUrl,
+        headers,
+        maxRedirects: 0,
+        validateStatus: () => true,
+      });
+    } catch (error) {
+      return { kind: 'error', error };
+    }
+
+    const followsRedirect = response.status >= 300 && response.status < 400
+      && response.headers.location && hops < maxHops;
+    if (followsRedirect) {
+      let nextUrl;
+      try {
+        nextUrl = new URL(response.headers.location, currentUrl).toString();
+      } catch (e) {
+        return { kind: 'blocked', reason: 'Invalid redirect URL' };
+      }
+      return fetchHop(nextUrl, hops + 1);
+    }
+    return { kind: 'response', response };
+  };
+
+  const outcome = await fetchHop(url, 0);
+  if (outcome.kind === 'blocked') {
+    render(JSON.stringify({
+      successStatus: false,
+      message: `❌ Service check blocked: ${outcome.reason}`,
+    }));
+    return;
+  }
+  if (outcome.kind === 'error') {
+    render(JSON.stringify({
+      successStatus: false,
+      message: makeErrorMessage(outcome.error),
+    }));
+    return;
+  }
+
+  const { response } = outcome;
+  // Non-2xx final response: same outcome as the old axios error path
+  if (response.status < 200 || response.status >= 300) {
+    if (validCodes && String(validCodes).includes(String(response.status))) {
       const results = {
-        statusCode, statusText, serverName, successStatus, timeTaken,
+        successStatus: getResponseType(response.status, validCodes),
+        statusCode: response.status,
+        statusText: response.statusText,
+        timeTaken: (new Date() - startTime),
       };
       results.message = makeMessageText(results);
-      return results;
-    })
-    .catch((error) => {
-      const response = error ? (error.response || {}) : {};
-      const returnCode = response.status || response.code;
-      if (validCodes && String(validCodes).includes(returnCode)) { // Success overridden by user
-        const results = {
-          successStatus: getResponseType(returnCode, validCodes),
-          statusCode: returnCode,
-          statusText: response.statusText,
-          timeTaken: (new Date() - startTime),
-        };
-        results.message = makeMessageText(results);
-        return results;
-      } else { // Request failed
-        return {
-          successStatus: false,
-          message: error.response ? makeErrorMessage2(error.response) : makeErrorMessage(error),
-        };
-      }
-    }).then((results) => {
-      // Request completed (either successfully, or failed) - render results
       render(JSON.stringify(results));
-    });
+    } else {
+      render(JSON.stringify({
+        successStatus: false,
+        message: makeErrorMessage2(response),
+      }));
+    }
+    return;
+  }
+
+  const statusCode = response.status;
+  const { statusText } = response;
+  const successStatus = getResponseType(statusCode, validCodes);
+  const serverName = response.request.socket && response.request.socket.servername;
+  const timeTaken = (new Date() - startTime);
+  const results = {
+    statusCode, statusText, serverName, successStatus, timeTaken,
+  };
+  results.message = makeMessageText(results);
+  render(JSON.stringify(results));
 };
 
 const decodeHeaders = (maybeHeaders) => {
@@ -114,6 +185,11 @@ module.exports = (paramStr, render) => {
     const options = {
       headers, enableInsecure, acceptCodes, maxRedirects,
     };
-    makeRequest(url, options, render);
+    makeRequest(url, options, render).catch((e) => {
+      render(JSON.stringify({
+        successStatus: false,
+        message: `❌ Service check failed: ${e.message || 'unexpected error'}`,
+      }));
+    });
   }
 };
