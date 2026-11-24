@@ -191,6 +191,59 @@ function getBasicAuthMiddleware() {
 
 const protectConfig = getBasicAuthMiddleware();
 
+/* Whether any HTTP-auth mechanism is actually configured: env basic auth
+ * (BASIC_AUTH_USERNAME + BASIC_AUTH_PASSWORD) or conf.yml users behind
+ * ENABLE_HTTP_AUTH. Mirrors getBasicAuthMiddleware's decision, so the
+ * "configured" test here and the "protect" behaviour there cannot drift. */
+function isAuthConfigured() {
+  const { BASIC_AUTH_USERNAME, BASIC_AUTH_PASSWORD } = process.env;
+  if (BASIC_AUTH_USERNAME && BASIC_AUTH_PASSWORD) return true;
+  if (process.env.ENABLE_HTTP_AUTH) {
+    const users = loadUserConfig();
+    return Array.isArray(users) && users.length > 0;
+  }
+  return false;
+}
+
+/* Whether the request comes from the same machine (loopback interface) */
+function isLoopback(req) {
+  const addr = (req.socket && req.socket.remoteAddress) || '';
+  return addr === '127.0.0.1' || addr === '::1' || addr === '::ffff:127.0.0.1';
+}
+
+/**
+ * Auth gate for the six server-side API groups: status-check,
+ * link-health-check, save, rebuild, system-info and cors-proxy.
+ *
+ * Why not just reuse protectConfig directly: protectConfig only guards
+ * GET /*.yml, and when no auth is configured it is a pass-through, so
+ * mounting it alone would leave every endpoint open on a default install.
+ * This middleware closes that gap:
+ * - loopback callers always pass, so local use is never locked out;
+ * - when auth IS configured, non-loopback callers must pass the existing
+ *   basic-auth check (protectConfig). The browser issues its native
+ *   basic-auth prompt once per origin and then caches the credentials,
+ *   which is why no frontend change was needed: all six endpoints are
+ *   called same-origin by the frontend (see src/mixins/*.js and the
+ *   Configuration / Widgets components). A follow-up could attach
+ *   makeBasicAuthHeaders() (src/utils/Auth.js) to those calls so the
+ *   app's own login page covers them instead of the browser prompt.
+ * - when NO auth is configured, non-loopback callers get 403. A default
+ *   install is therefore only usable from the machine itself; to expose
+ *   the dashboard on a LAN / publicly, configure auth first
+ *   (ENABLE_HTTP_AUTH + appConfig.auth.users, or BASIC_AUTH_USERNAME /
+ *   BASIC_AUTH_PASSWORD, see .env.example).
+ */
+function requireAuthOrLocal(req, res, next) {
+  if (isLoopback(req)) return next();
+  if (isAuthConfigured()) return protectConfig(req, res, next);
+  return res.status(403).json({
+    success: false,
+    message: 'Forbidden: this endpoint requires HTTP auth when accessed from a non-local address. '
+      + 'Configure ENABLE_HTTP_AUTH / BASIC_AUTH_USERNAME + BASIC_AUTH_PASSWORD, or call it from localhost.',
+  });
+}
+
 /* A middleware function for Connect, that filters requests based on method type */
 const method = (m, mw) => (req, res, next) => (req.method === m ? mw(req, res, next) : next());
 
@@ -200,7 +253,7 @@ const app = express()
   // Load middlewares for parsing JSON, and supporting HTML5 history routing
   .use(express.json({ limit: '1mb' }))
   // GET endpoint to run status of a given URL with GET request
-  .use(ENDPOINTS.statusCheck, (req, res) => {
+  .use(ENDPOINTS.statusCheck, requireAuthOrLocal, (req, res) => {
     try {
       statusCheck(req.url, async (results) => {
         res.setHeader('Content-Type', 'application/json');
@@ -211,7 +264,7 @@ const app = express()
     }
   })
   // POST endpoint to run bulk link health checks from the config editor
-  .use(ENDPOINTS.linkHealthCheck, method('POST', async (req, res) => {
+  .use(ENDPOINTS.linkHealthCheck, requireAuthOrLocal, method('POST', async (req, res) => {
     try {
       const results = await linkHealthCheck(req.body);
       res.setHeader('Content-Type', 'application/json');
@@ -222,7 +275,7 @@ const app = express()
     }
   }))
   // POST Endpoint used to save config, by writing config file to disk
-  .use(ENDPOINTS.save, method('POST', (req, res) => {
+  .use(ENDPOINTS.save, requireAuthOrLocal, method('POST', (req, res) => {
     try {
       saveConfig(req.body, (results) => { res.end(results); });
       config = req.body.config; // update the config
@@ -232,7 +285,7 @@ const app = express()
     }
   }))
   // GET endpoint to trigger a build, and respond with success status and output
-  .use(ENDPOINTS.rebuild, (req, res) => {
+  .use(ENDPOINTS.rebuild, requireAuthOrLocal, (req, res) => {
     rebuild().then((response) => {
       res.end(JSON.stringify(response));
     }).catch((response) => {
@@ -240,7 +293,7 @@ const app = express()
     });
   })
   // GET endpoint to return system info, for widget
-  .use(ENDPOINTS.systemInfo, (req, res) => {
+  .use(ENDPOINTS.systemInfo, requireAuthOrLocal, (req, res) => {
     try {
       const results = systemInfo();
       systemInfo.success = true;
@@ -250,9 +303,13 @@ const app = express()
     }
   })
   // GET for accessing non-CORS API services
-  .use(ENDPOINTS.corsProxy, (req, res) => {
+  .use(ENDPOINTS.corsProxy, requireAuthOrLocal, (req, res) => {
     try {
-      corsProxy(req, res);
+      Promise.resolve(corsProxy(req, res)).catch((e) => {
+        if (!res.headersSent) {
+          res.status(500).end(JSON.stringify({ success: false, message: e.message }));
+        }
+      });
     } catch (e) {
       res.end(JSON.stringify({ success: false, message: e }));
     }
