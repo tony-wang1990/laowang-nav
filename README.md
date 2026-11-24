@@ -14,6 +14,41 @@
 
 [在线演示](https://demo-nav.zeabur.app/) | [快速开始](#快速开始) | [功能特性](#功能特性) | [最近更新](#最近更新) | [部署方式](#部署方式)
 
+> **一句话：Dashy 的中文增强版——开箱即用的中文导航站，带链接健康巡检。**
+
+## 与 Dashy 对照
+
+|  | 上游 Dashy | 本项目（LaoWang Nav） |
+| --- | --- | --- |
+| 定位 | 通用自托管导航页 | 面向中文用户与家庭服务器的导航控制台 |
+| 界面语言 | 英文为主 | 中文本地化、中文默认配置与中文文档 |
+| 部署 | Docker / 源码 | 同上，另有一键安装脚本、GHCR 镜像、Watchtower 示例 |
+| 图标 | 基础 favicon 兜底 | 多级 favicon fallback + 图标健康检查（一键修复可疑图标） |
+| 链接巡检 | 无 | 链接健康面板：批量测 HTTP 状态、耗时、重定向、证书剩余天数 |
+| 状态检查 | 基础 ping | 保留，另有私网目标校验（见下文安全说明） |
+| CORS 代理 | 内置、无限制 | 默认关闭，需显式开启 + allowlist |
+| 写接口鉴权 | 仅保护 `*.yml` | 六组服务端接口统一鉴权（未配鉴权时仅本机可调用） |
+| 构建 | Vue 2 / Vue CLI | 同上（Vue 2.7，见下方 Roadmap） |
+| 适合谁 | 想要原版 Dashy 的用户 | 中文用户、 homelab 玩家、想直接用“链接巡检 + 中文配置”的用户；追求原版更新速度或要 Vue 3 的用户建议用上游 Dashy |
+
+## 安全说明
+
+> [!WARNING]
+> 请勿把未配置鉴权的实例直接暴露到公网。
+>
+> - **六组服务端接口已鉴权**：`/status-check`、`/link-health-check`、`/config-manager/save`、`/config-manager/rebuild`、`/system-info`、`/cors-proxy`。本机（loopback）访问不受限；非本机访问时，若已配置 HTTP 鉴权（`ENABLE_HTTP_AUTH` + `appConfig.auth.users`，或 `BASIC_AUTH_USERNAME` / `BASIC_AUTH_PASSWORD`），按该鉴权校验，浏览器会弹出一次原生登录框；若未配置任何鉴权，非本机访问一律返回 403。**公网部署前请先配置鉴权。**
+> - **CORS 代理默认关闭**：`/cors-proxy` 只有在 `CORS_PROXY_ENABLED=1` 时才开启，且目标 host 必须在 `CORS_PROXY_ALLOWLIST`（逗号分隔，如 `api.example.com,stats.example.com`）中，未配置 allowlist 时开启也一律拒绝；仅允许 http/https；私网 / 回环 / 链路本地目标默认拒绝，需另设 `CORS_PROXY_ALLOW_PRIVATE=1` 才放行已列入 allowlist 的私网目标。
+> - **状态检查与链接健康检查默认拒绝私网目标**：`/status-check` 与 `/link-health-check` 会校验目标 host，字面私网 IP 与解析到私网地址的域名都会被拒（每一次重定向跳转都会重新校验）。家庭服务器需要检测内网服务时，可设置 `NAV_ALLOW_PRIVATE_TARGETS=1` 显式放行（同时放开这两处）。
+> - 已知待后续处理：`src/utils/defaults.js` 里仍有一枚硬编码的第三方 API key（Font-Awesome），尚未移入环境变量 / 配置项，生产使用请注意。
+
+## Roadmap
+
+- **Vue 2 → Vue 3**：计划迁移到 Vue 3 + 组合式 API，保留现有 YAML 配置与主题体系；迁移前先补齐关键链路的自动化测试。
+- **Vue CLI → Vite**：构建链路从 Vue CLI / Webpack 5 迁移到 Vite，目标是更快的本地开发启动与构建；先以分支验证，不直接替换主构建链。
+- **接口鉴权前端化**：让前端六组接口调用附带应用自身的登录凭证（`makeBasicAuthHeaders()`），替代浏览器原生登录框。
+- **配置密钥治理**：把 `src/utils/defaults.js` 的硬编码第三方 API key 移入环境变量 / 配置项。
+- 固定语义化 Release（替代日期流水号），完善英文 README 与 Changelog。
+
 ---
 
 ## 截图预览
@@ -79,6 +114,13 @@
 ---
 
 ## 最近更新
+
+### 2026-11-24
+
+- 安全加固：`/status-check`、`/link-health-check`、`/config-manager/save`、`/config-manager/rebuild`、`/system-info`、`/cors-proxy` 六组服务端接口统一鉴权（已配鉴权按现有方式校验，未配鉴权时仅本机可调用，非本机返回 403）。
+- CORS 代理默认关闭（`CORS_PROXY_ENABLED=1` 才开启），开启时需配置 allowlist、仅允许 http/https，私网目标默认拒绝。
+- 状态检查与链接健康检查增加私网目标校验（含 DNS 解析后逐 IP 校验、每次重定向重新校验）；内网服务检测可设置 `NAV_ALLOW_PRIVATE_TARGETS=1` 显式放行。
+- CI 的 `actions/checkout` 与 `actions/setup-node` 从 v3 升到 v4；删除 `user-data/conf.yml.bak`。
 
 ### 2026-07-09
 
@@ -284,7 +326,7 @@ docker restart laowang-nav
 
 ### 链接健康面板检测失败
 
-链接健康面板由服务端发起请求。请确认当前部署方式包含 Node/Express 后端，并且目标站点允许访问。内网、登录态、反爬或证书异常的站点可能需要单独设置 `statusCheckUrl`。
+链接健康面板由服务端发起请求。请确认当前部署方式包含 Node/Express 后端，并且目标站点允许访问。内网、登录态、反爬或证书异常的站点可能需要单独设置 `statusCheckUrl`。注意：私网 / 内网目标默认会被服务端拒绝，如需检测内网链接，请设置 `NAV_ALLOW_PRIVATE_TARGETS=1`（见“安全说明”）。
 
 ---
 
