@@ -18,8 +18,16 @@ module.exports = {
   layout: 'auto',
   /* Default theme to be applied on initial load */
   theme: 'random',
-  /* Default Font-Awesome API key, for FA icons (if used) */
-  fontAwesomeKey: '0821c65656',
+  /* Font-Awesome kit key, for FA icons (if used).
+   * No key is hard-coded here: set VUE_APP_FONTAWESOME_KEY at build time,
+   * or set appConfig.fontAwesomeKey in conf.yml instead.
+   * NOTE: VUE_APP_* variables are baked into the frontend bundle, i.e.
+   * public. Only use a public Font Awesome kit key here, never a
+   * private credential. When empty, no Font Awesome kit script is
+   * loaded and fa-* icons fall back to the other icon sources
+   * (Material Design Icons, Simple Icons, favicons); the page keeps
+   * working. */
+  fontAwesomeKey: process.env.VUE_APP_FONTAWESOME_KEY || '',
   /* Default API to use for fetching of user service favicon icons (if enabled) */
   faviconApi: 'iowen',
   /* The default sort order for sections */

@@ -39,14 +39,14 @@
 > - **六组服务端接口已鉴权**：`/status-check`、`/link-health-check`、`/config-manager/save`、`/config-manager/rebuild`、`/system-info`、`/cors-proxy`。本机（loopback）访问不受限；非本机访问时，若已配置 HTTP 鉴权（`ENABLE_HTTP_AUTH` + `appConfig.auth.users`，或 `BASIC_AUTH_USERNAME` / `BASIC_AUTH_PASSWORD`），按该鉴权校验，浏览器会弹出一次原生登录框；若未配置任何鉴权，非本机访问一律返回 403。**公网部署前请先配置鉴权。**
 > - **CORS 代理默认关闭**：`/cors-proxy` 只有在 `CORS_PROXY_ENABLED=1` 时才开启，且目标 host 必须在 `CORS_PROXY_ALLOWLIST`（逗号分隔，如 `api.example.com,stats.example.com`）中，未配置 allowlist 时开启也一律拒绝；仅允许 http/https；私网 / 回环 / 链路本地目标默认拒绝，需另设 `CORS_PROXY_ALLOW_PRIVATE=1` 才放行已列入 allowlist 的私网目标。
 > - **状态检查与链接健康检查默认拒绝私网目标**：`/status-check` 与 `/link-health-check` 会校验目标 host，字面私网 IP 与解析到私网地址的域名都会被拒（每一次重定向跳转都会重新校验）。家庭服务器需要检测内网服务时，可设置 `NAV_ALLOW_PRIVATE_TARGETS=1` 显式放行（同时放开这两处）。
-> - 已知待后续处理：`src/utils/defaults.js` 里仍有一枚硬编码的第三方 API key（Font-Awesome），尚未移入环境变量 / 配置项，生产使用请注意。
+> - **Font-Awesome key 已移出代码**：`src/utils/defaults.js` 里不再有硬编码的 key，默认改从构建期环境变量 `VUE_APP_FONTAWESOME_KEY`（或 `conf.yml` 的 `appConfig.fontAwesomeKey`）读取；未配置时不加载 Font Awesome kit 脚本，图标走原有 fallback 链路，页面不受影响。注意 `VUE_APP_*` 变量会打进前端 bundle，等于公开，只放公开的 kit key，不要放任何私密 key。
 
 ## Roadmap
 
 - **Vue 2 → Vue 3**：计划迁移到 Vue 3 + 组合式 API，保留现有 YAML 配置与主题体系；迁移前先补齐关键链路的自动化测试。
 - **Vue CLI → Vite**：构建链路从 Vue CLI / Webpack 5 迁移到 Vite，目标是更快的本地开发启动与构建；先以分支验证，不直接替换主构建链。
 - **接口鉴权前端化**：让前端六组接口调用附带应用自身的登录凭证（`makeBasicAuthHeaders()`），替代浏览器原生登录框。
-- **配置密钥治理**：把 `src/utils/defaults.js` 的硬编码第三方 API key 移入环境变量 / 配置项。
+- ~~配置密钥治理：把 `src/utils/defaults.js` 的硬编码第三方 API key 移入环境变量 / 配置项。~~（已完成，见上方安全说明）
 - 固定语义化 Release（替代日期流水号），完善英文 README 与 Changelog。
 
 ---

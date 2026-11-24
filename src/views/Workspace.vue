@@ -58,8 +58,11 @@ export default {
       this.widgets = widgets;
     },
     initiateFontAwesome() {
-      const fontAwesomeScript = document.createElement('script');
       const faKey = this.appConfig.fontAwesomeKey || Defaults.fontAwesomeKey;
+      // No key configured: skip the kit script; fa-* icons fall back
+      // to the other icon sources instead of loading a broken URL
+      if (!faKey) return;
+      const fontAwesomeScript = document.createElement('script');
       fontAwesomeScript.setAttribute('src', `https://kit.fontawesome.com/${faKey}.js`);
       document.head.appendChild(fontAwesomeScript);
     },

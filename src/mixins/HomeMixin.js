@@ -131,8 +131,11 @@ const HomeMixin = {
     /* Injects font-awesome's script tag, only if needed */
     initiateFontAwesome() {
       if (this.checkIfFontAwesomeNeeded()) {
-        const fontAwesomeScript = document.createElement('script');
         const faKey = this.appConfig.fontAwesomeKey || Defaults.fontAwesomeKey;
+        // No key configured: skip the kit script instead of loading a
+        // broken URL; fa-* icons fall back to the other icon sources
+        if (!faKey) return;
+        const fontAwesomeScript = document.createElement('script');
         fontAwesomeScript.setAttribute('src', `${iconCdns.fa}/${faKey}.js`);
         document.head.appendChild(fontAwesomeScript);
       }
