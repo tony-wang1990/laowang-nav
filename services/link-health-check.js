@@ -4,6 +4,7 @@
  */
 const http = require('http');
 const https = require('https');
+const { assertHostAllowed } = require('./ssrf-guard');
 
 const REQUEST_TIMEOUT = 8000;
 const MAX_REDIRECTS = 5;
@@ -78,6 +79,57 @@ const makeRequest = (targetUrl, method) => new Promise((resolve) => {
 });
 
 const checkUrl = async (rawUrl, targetUrl, method, redirectCount, startedAt) => {
+  // SSRF guard: validate the target of every hop (initial URL and each
+  // redirect), not just the first one. Private / loopback / link-local
+  // targets are rejected unless NAV_ALLOW_PRIVATE_TARGETS=1 (see README
+  // "安全说明"). Rejection is reported per link, not as a batch failure.
+  let parsed;
+  try {
+    parsed = new URL(targetUrl);
+  } catch (e) {
+    return {
+      protocol: '',
+      statusCode: 0,
+      statusText: '',
+      error: 'Invalid URL',
+      code: 'INVALID_URL',
+      url: rawUrl,
+      finalUrl: targetUrl,
+      redirectCount,
+      durationMs: Date.now() - startedAt,
+      ok: false,
+    };
+  }
+  if (!['http:', 'https:'].includes(parsed.protocol)) {
+    return {
+      protocol: parsed.protocol,
+      statusCode: 0,
+      statusText: '',
+      error: 'Unsupported protocol',
+      code: 'UNSUPPORTED_PROTOCOL',
+      url: rawUrl,
+      finalUrl: targetUrl,
+      redirectCount,
+      durationMs: Date.now() - startedAt,
+      ok: false,
+    };
+  }
+  try {
+    await assertHostAllowed(parsed.hostname);
+  } catch (e) {
+    return {
+      protocol: parsed.protocol,
+      statusCode: 0,
+      statusText: '',
+      error: e.message,
+      code: e.code || 'PRIVATE_HOST',
+      url: rawUrl,
+      finalUrl: targetUrl,
+      redirectCount,
+      durationMs: Date.now() - startedAt,
+      ok: false,
+    };
+  }
   const result = await makeRequest(targetUrl, method);
   const canRedirect = result.redirectTo
     && result.statusCode >= 300
